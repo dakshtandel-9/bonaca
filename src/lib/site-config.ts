@@ -10,8 +10,7 @@ export const siteConfig = {
   title: "Bonaca — A Private Retreat",
   description:
     "Discover Bonaca, a thoughtfully designed private retreat surrounded by greenery, comfort and quiet.",
-  /** PLACEHOLDER domain — required by metadataBase, robots and sitemap. */
-  url: "https://bonaca.example.com",
+  url: "https://bonaca-retreat.dakshtandel.chatgpt.site",
   locale: "en_IN",
 
   contact: {
