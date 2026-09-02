@@ -1,60 +1,45 @@
-import Image from "next/image";
-
 import Container from "@/components/layout/Container";
 import Counter from "@/components/ui/Counter";
 import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
 import { overviewPanel, overviewStatement, propertyStats } from "@/data/property";
-import { publicAssetExists } from "@/lib/asset";
-import { IMAGES, SECTION_IDS } from "@/lib/constants";
+import { SECTION_IDS } from "@/lib/constants";
 
 /**
- * The premise, composed as plates rather than stacked rows.
- *
- * The statement holds the left, and the pull-quote panel fills the right —
- * the half that used to sit empty while the paragraph ran down in seven short
- * lines. Underneath, one ledger states each fact once, replacing the numbers
- * grid and the highlights grid that repeated it.
- *
- * The photo band uses the hero panel's corner radius so the two read as the
- * same object. It renders a labelled slot until the file exists, so the page
- * is never showing a broken image or a stand-in borrowed from elsewhere.
+ * The first section after the hero carries its editorial scale forward while
+ * deliberately leaving the main photography slot empty for the owner.
  */
 export default function OverviewSection() {
-  const words = overviewStatement.split(" ");
-  const hasPhoto = publicAssetExists(IMAGES.premise);
-
   return (
     <section id={SECTION_IDS.overview} className="overview" aria-labelledby="overview-title">
       <Container>
-        <h2 id="overview-title" className="sr-only">
-          About Bonaca
-        </h2>
-
         <Reveal as="p" variant="fade" className="section-eyebrow">
           <span className="section-index">01</span>
           <Monogram size={0.85} className="section-mark" />
           <span>The premise</span>
         </Reveal>
 
-        <div className="premise-top">
-          <p className="statement">
-            {words.map((word, i) => (
-              <Reveal
-                as="span"
-                key={`${word}-${i}`}
-                variant="fade"
-                delay={i * 0.02}
-                className="statement-word"
-              >
-                {word}{" "}
-              </Reveal>
-            ))}
-          </p>
+        <div className="premise-intro">
+          <Reveal as="h2" variant="mask" id="overview-title" className="premise-title">
+            <span>A home made for slower days.</span>
+          </Reveal>
+          <Reveal as="p" variant="up" delay={0.12} className="premise-intro-copy">
+            {overviewStatement}
+          </Reveal>
+        </div>
 
-          <Reveal variant="scale" delay={0.15} className="premise-panel">
-            <span className="grain" aria-hidden="true" />
-            <Monogram size={15} className="premise-mark" />
+        <div className="premise-composition">
+          <Reveal variant="scale" className="image-placeholder premise-image-placeholder">
+            <span className="placeholder-kicker">Exterior photograph</span>
+            <div className="placeholder-spec">
+              <span>Recommended upload</span>
+              <strong>2400 × 1500 px</strong>
+              <small>Landscape · 8:5 · JPG or WebP</small>
+            </div>
+          </Reveal>
+
+          <Reveal variant="up" delay={0.14} className="premise-panel">
+            <Monogram size={10} className="premise-mark" />
 
             <p className="premise-label">
               <Monogram size={0.8} />
@@ -70,29 +55,6 @@ export default function OverviewSection() {
             <p className="premise-claim">{overviewPanel.claim}</p>
           </Reveal>
         </div>
-
-        <Reveal variant="scale" className="premise-photo">
-          {hasPhoto ? (
-            <Image
-              src={IMAGES.premise}
-              alt="Bonaca in daylight — the house seen across its own ground"
-              width={2520}
-              height={1080}
-              sizes="(max-width: 900px) 92vw, 90vw"
-            />
-          ) : (
-            <div className="photo-slot">
-              <Monogram size={2.6} />
-              <p className="photo-slot-title">Photograph goes here</p>
-              <p className="photo-slot-spec">
-                <span>2520 × 1080</span>
-                <span>21:9</span>
-                <span>JPEG</span>
-              </p>
-              <p className="photo-slot-path">public/images/bonaca/premise/premise-wide.jpg</p>
-            </div>
-          )}
-        </Reveal>
 
         <ul className="premise-ledger">
           {propertyStats.map((stat, i) => (

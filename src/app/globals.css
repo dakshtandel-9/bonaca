@@ -632,48 +632,127 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
 
 .overview { background: var(--cream); }
 
-/* Statement left, pull-quote panel right — the right half used to sit empty
-   while the paragraph ran down in seven short lines. */
-.premise-top {
+.premise-intro {
   display: grid;
-  grid-template-columns: 1.06fr 0.94fr;
-  align-items: stretch;
-  gap: clamp(2rem, 4.5vw, 4.5rem);
+  grid-template-columns: 1.08fr 0.92fr;
+  align-items: end;
+  gap: clamp(2.5rem, 7vw, 7rem);
+  margin-top: clamp(2rem, 4vw, 3.8rem);
 }
-
-.statement {
-  align-self: center;
-  max-width: 34ch;
+.premise-title {
+  max-width: 11ch;
   margin: 0;
   font-family: var(--serif);
-  font-size: clamp(1.7rem, 2.85vw, 2.95rem);
+  font-size: clamp(3.4rem, 6.1vw, 6.6rem);
   font-weight: 300;
-  letter-spacing: -0.026em;
-  line-height: 1.16;
-  text-wrap: pretty;
+  letter-spacing: -0.04em;
+  line-height: 0.92;
 }
-.statement-word { display: inline; }
-/* The wash: words sit faint until they are read, then settle to full ink. */
-.statement .statement-word[data-armed] { opacity: 1; color: var(--fg-faint); }
-.statement .statement-word[data-in] { color: var(--ink); }
+.premise-intro-copy {
+  max-width: 35rem;
+  margin: 0 0 0.45rem;
+  color: var(--fg-muted);
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
+  line-height: 1.82;
+}
+
+.premise-composition {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  align-items: center;
+  margin-top: clamp(4rem, 8vw, 7.5rem);
+}
+
+.image-placeholder {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border: 1px dashed color-mix(in srgb, currentColor 28%, transparent);
+  background:
+    linear-gradient(135deg, transparent 49.8%, color-mix(in srgb, currentColor 9%, transparent) 50%, transparent 50.2%),
+    linear-gradient(45deg, transparent 49.8%, color-mix(in srgb, currentColor 9%, transparent) 50%, transparent 50.2%),
+    color-mix(in srgb, currentColor 4%, transparent);
+}
+.image-placeholder::before,
+.image-placeholder::after {
+  content: "";
+  position: absolute;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-color: currentColor;
+  opacity: 0.45;
+}
+.image-placeholder::before {
+  top: 1rem;
+  left: 1rem;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+.image-placeholder::after {
+  right: 1rem;
+  bottom: 1rem;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+}
+.placeholder-kicker {
+  position: absolute;
+  top: 1.45rem;
+  right: 1.5rem;
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.58;
+}
+.placeholder-spec {
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
+  padding: 2rem;
+  text-align: center;
+}
+.placeholder-spec span,
+.placeholder-spec small {
+  font-size: 0.65rem;
+  font-weight: 650;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  opacity: 0.58;
+}
+.placeholder-spec strong {
+  font-family: var(--serif);
+  font-size: clamp(2.35rem, 4.6vw, 4.8rem);
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+.premise-image-placeholder {
+  grid-column: 1 / 9;
+  aspect-ratio: 8 / 5;
+  color: var(--ink);
+}
 
 .premise-panel {
   position: relative;
+  z-index: 2;
+  grid-column: 8 / -1;
+  grid-row: 1;
   display: grid;
   align-content: space-between;
   gap: clamp(1.6rem, 3.2vw, 2.8rem);
-  padding: clamp(1.8rem, 3vw, 2.9rem);
+  min-height: 72%;
+  padding: clamp(2.1rem, 3.4vw, 3.5rem);
   overflow: hidden;
-  border-radius: calc(var(--panel-radius) * 1.15);
-  background: var(--ink);
-  color: var(--sand-soft);
+  border-radius: 0.55rem;
+  background: #17210d;
+  color: #f4e5cf;
   isolation: isolate;
 }
 .premise-panel > blockquote,
 .premise-panel > .premise-claim,
 .premise-panel > .premise-label { position: relative; z-index: 2; }
 
-/* Gives the panel a head, so the quote reads as composed rather than floating. */
 .premise-label {
   display: flex;
   align-items: center;
@@ -707,78 +786,14 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
   line-height: 1.72;
 }
 
-/* Oversized mark bled off the corner, behind the text. */
 .premise-mark {
   position: absolute;
-  right: -4.5rem;
-  bottom: -5rem;
+  right: -3rem;
+  bottom: -3.5rem;
   z-index: 1;
   color: color-mix(in srgb, var(--sand) 11%, transparent);
 }
 
-/* Photo band. Same corner radius as the hero panel so the two plates read as
-   the same object; 21:9 on desktop, centre-cropped to 3:2 on phones. */
-.premise-photo {
-  margin-top: clamp(2.5rem, 5vw, 4.5rem);
-  overflow: hidden;
-  border-radius: calc(var(--panel-radius) * 1.35);
-  background: var(--cream-warm);
-}
-.premise-photo img {
-  display: block;
-  width: 100%;
-  aspect-ratio: 21 / 9;
-  object-fit: cover;
-}
-
-/* Shown only until the file exists at the documented path. */
-.photo-slot {
-  display: grid;
-  place-content: center;
-  justify-items: center;
-  gap: 0.55rem;
-  aspect-ratio: 21 / 9;
-  padding: 2rem;
-  border: 1px dashed color-mix(in srgb, var(--ink) 26%, transparent);
-  border-radius: inherit;
-  background:
-    radial-gradient(90% 120% at 50% 0%, color-mix(in srgb, var(--sand) 34%, transparent), transparent 70%),
-    var(--cream-warm);
-  color: var(--ink);
-  text-align: center;
-}
-.photo-slot > svg { color: var(--accent); opacity: 0.7; }
-.photo-slot p { margin: 0; }
-.photo-slot-title {
-  margin-top: 0.6rem;
-  font-family: var(--serif);
-  font-size: clamp(1.3rem, 2vw, 1.8rem);
-  font-weight: 400;
-}
-.photo-slot-spec {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 0.4rem 0.55rem;
-}
-.photo-slot-spec span {
-  padding: 0.3rem 0.7rem;
-  border: 1px solid var(--rule);
-  border-radius: 999px;
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.13em;
-  text-transform: uppercase;
-}
-.photo-slot-path {
-  color: var(--fg-faint);
-  font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
-  font-size: 0.66rem;
-  word-break: break-all;
-}
-
-/* One ledger, replacing the numbers grid and the highlights grid that
-   restated it. Hairlines come from the 1px gaps over a ruled background. */
 .premise-ledger {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -824,17 +839,49 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
    03 — Story
    -------------------------------------------------------------------------- */
 
-.story > .container {
+.story { background: #121b0c; }
+.story > .container { display: block; }
+
+.story-heading {
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
+  grid-template-columns: 0.34fr 1fr;
   align-items: start;
-  gap: clamp(3rem, 7vw, 7rem);
+  gap: clamp(2rem, 5vw, 5rem);
+}
+.story-heading .section-eyebrow { margin-top: 0.8rem; }
+.story-title {
+  max-width: 12ch;
+  font-size: clamp(3.7rem, 6.7vw, 7rem) !important;
+  letter-spacing: -0.04em !important;
+  line-height: 0.92 !important;
 }
 
-.story-text { position: sticky; top: 7.5rem; }
-.story-para { max-width: 32rem; margin: 1.4rem 0 0; color: var(--fg-muted); line-height: 1.8; }
+.story-layout {
+  display: grid;
+  grid-template-columns: 1.12fr 0.88fr;
+  align-items: center;
+  gap: clamp(3rem, 8vw, 8rem);
+  margin-top: clamp(4rem, 8vw, 8rem);
+}
 
-.story-specs { margin-top: 2.8rem; border-top: 1px solid var(--rule); }
+.story-text { padding-bottom: 1rem; }
+.story-copy-label {
+  margin: 0 0 2.2rem;
+  color: var(--accent);
+  font-size: var(--step-label);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.story-para {
+  max-width: 32rem;
+  margin: 1.4rem 0 0;
+  color: var(--fg-muted);
+  font-size: clamp(0.95rem, 1.08vw, 1.08rem);
+  line-height: 1.84;
+}
+
+.story-specs { margin-top: 3.2rem; border-top: 1px solid var(--rule); }
 .story-specs li {
   display: flex;
   gap: 1.2rem;
@@ -853,25 +900,25 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
 }
 
 .story-media { position: relative; }
-.story-image { overflow: hidden; }
-.story-image img {
-  display: block;
-  width: 100%;
-  height: clamp(30rem, 62vw, 46rem);
-  object-fit: cover;
-  object-position: 50% 72%;
-  scale: 1.14;
+.story-image-placeholder {
+  width: min(100%, 42rem);
+  aspect-ratio: 4 / 5;
+  color: #f4e5cf;
+  background:
+    linear-gradient(135deg, transparent 49.9%, rgb(244 229 207 / 10%) 50%, transparent 50.1%),
+    linear-gradient(45deg, transparent 49.9%, rgb(244 229 207 / 10%) 50%, transparent 50.1%),
+    rgb(244 229 207 / 3%);
 }
 
 .story-quote {
   position: absolute;
-  left: clamp(-4.5rem, -4vw, -1rem);
-  bottom: -2.5rem;
+  right: clamp(-3.5rem, -3vw, -1rem);
+  bottom: clamp(1.5rem, 4vw, 4rem);
   display: grid;
   gap: 1rem;
-  width: min(18rem, 62%);
-  padding: 2rem 1.8rem;
-  background: var(--sand);
+  width: min(19rem, 62%);
+  padding: 2.2rem 2rem;
+  background: #f0d0a0;
   color: var(--ink);
 }
 .story-quote p {
@@ -1521,22 +1568,33 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
   .section-header[data-layout="split"] { grid-template-columns: 1fr; }
   .section-header[data-layout="split"] .section-lede { margin: 1.4rem 0 0; }
 
-  .story > .container,
   .rooms-body,
   .location > .container,
   .booking > .container { grid-template-columns: 1fr; }
-  .story-text { position: static; }
-  .story-media { margin-top: 3rem; }
-  .story-quote { left: auto; right: 1rem; bottom: -1.5rem; }
+
+  .premise-intro { grid-template-columns: 1fr; gap: 1.8rem; }
+  .premise-title { max-width: 10ch; }
+  .premise-intro-copy { max-width: 42rem; }
+  .premise-image-placeholder { grid-column: 1 / -1; }
+  .premise-panel {
+    grid-column: 4 / -1;
+    grid-row: 2;
+    min-height: 25rem;
+    margin-top: -5rem;
+  }
+
+  .story-heading { grid-template-columns: 1fr; gap: 1.5rem; }
+  .story-heading .section-eyebrow { margin-top: 0; }
+  .story-layout { grid-template-columns: 1fr; gap: 5rem; }
+  .story-media { width: min(88%, 38rem); }
+  .story-text { max-width: 38rem; }
+  .story-quote { right: -2.5rem; }
 
   .rooms-stage { min-height: 0; margin-top: 2rem; }
   .rooms-stage figure { position: relative; display: none; }
   .rooms-stage figure[data-active] { display: block; }
   .rooms-stage figcaption { grid-template-columns: 1fr; }
 
-  .premise-top { grid-template-columns: 1fr; gap: 2.5rem; }
-  .premise-photo img, .photo-slot { aspect-ratio: 16 / 9; }
-  .statement { max-width: none; }
   .amenities-list { grid-template-columns: 1fr; }
   .faq { margin-top: 3.5rem; }
   .footer-cols { grid-template-columns: repeat(2, 1fr); }
@@ -1638,7 +1696,21 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
 @media (max-width: 560px) {
   .brand-symbol { display: none; }
   .story-quote { position: static; width: auto; margin-top: 1rem; }
-  .premise-photo img, .photo-slot { aspect-ratio: 3 / 2; }
+  .premise-composition { gap: 1rem; }
+  .premise-image-placeholder {
+    grid-row: 1;
+    min-height: 18rem;
+    aspect-ratio: 4 / 3;
+  }
+  .premise-panel {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    min-height: 23rem;
+    margin-top: 0;
+  }
+  .story-media { width: 100%; }
+  .placeholder-kicker { top: 1.1rem; right: 1.1rem; }
+  .placeholder-spec strong { font-size: clamp(2.1rem, 11vw, 3rem); }
   .premise-ledger { grid-template-columns: 1fr; }
   /* Also unset the two-column nth-child rule, which outranks these. */
   .premise-ledger li,
