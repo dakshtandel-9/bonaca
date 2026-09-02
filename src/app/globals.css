@@ -703,6 +703,20 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
   aspect-ratio: 3 / 2;
   color: var(--ink);
 }
+.premise-image-frame {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 0.45rem;
+  background: var(--cream-warm);
+}
+.premise-image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
 
 .premise-ledger {
   display: grid;
@@ -1545,6 +1559,7 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
     padding-top: 0.75rem;
   }
   .premise-image-placeholder,
+  .premise-image-frame,
   .story-image-placeholder { aspect-ratio: 16 / 9; }
   .story-image-placeholder { order: 2; }
   .story-text { order: 1; }

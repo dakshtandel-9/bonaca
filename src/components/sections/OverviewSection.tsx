@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import Container from "@/components/layout/Container";
 import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
@@ -37,12 +39,15 @@ export default function OverviewSection() {
             </ul>
           </div>
 
-          <Reveal variant="scale" delay={0.08} className="image-placeholder premise-image-placeholder">
-            <div className="placeholder-spec">
-              <span>Image size</span>
-              <strong>2400 × 1600 px</strong>
-              <small>Landscape · 3:2</small>
-            </div>
+          <Reveal variant="scale" delay={0.08} className="premise-image-frame">
+            <Image
+              className="premise-image"
+              src="/images/bonaca/premise/sec2.png"
+              alt="Bonaca's illuminated entrance and landscaped grounds at dusk"
+              width={1536}
+              height={1024}
+              sizes="(max-width: 759px) 100vw, 58vw"
+            />
           </Reveal>
         </div>
       </Container>
