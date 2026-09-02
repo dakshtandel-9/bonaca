@@ -5,43 +5,31 @@ import { property } from "@/data/property";
 import { SECTION_IDS } from "@/lib/constants";
 
 /**
- * A dark editorial chapter with a deliberately empty interior-photo slot.
+ * A simple dark chapter with one owner-supplied photo slot.
  */
 export default function StorySection() {
   return (
     <section id={SECTION_IDS.story} className="story band-dark" aria-labelledby="story-title">
       <Container>
-        <div className="story-heading">
-          <Reveal as="p" variant="fade" className="section-eyebrow">
-            <span className="section-index">02</span>
-            <Monogram size={0.85} className="section-mark" />
-            <span>The house</span>
-          </Reveal>
-
-          <Reveal as="h2" variant="mask" id="story-title" className="story-title">
-            <span>Designed around light, air and quiet.</span>
-          </Reveal>
-        </div>
-
         <div className="story-layout">
-          <div className="story-media">
-            <Reveal variant="scale" className="image-placeholder story-image-placeholder">
-              <span className="placeholder-kicker">Interior photograph</span>
-              <div className="placeholder-spec">
-                <span>Recommended upload</span>
-                <strong>1800 × 2250 px</strong>
-                <small>Portrait · 4:5 · JPG or WebP</small>
-              </div>
-            </Reveal>
-
-            <Reveal as="blockquote" variant="up" delay={0.18} className="story-quote">
-              <Monogram size={1.25} />
-              <p>The quiet is the amenity.</p>
-            </Reveal>
-          </div>
+          <Reveal variant="scale" className="image-placeholder story-image-placeholder">
+            <div className="placeholder-spec">
+              <span>Image size</span>
+              <strong>1800 × 1350 px</strong>
+              <small>Landscape · 4:3</small>
+            </div>
+          </Reveal>
 
           <div className="story-text">
-            <p className="story-copy-label">A considered stay</p>
+            <Reveal as="p" variant="fade" className="section-eyebrow">
+              <span className="section-index">02</span>
+              <Monogram size={0.85} className="section-mark" />
+              <span>The house</span>
+            </Reveal>
+
+            <Reveal as="h2" variant="mask" id="story-title" className="story-title">
+              <span>Built slowly, on purpose.</span>
+            </Reveal>
 
             {property.intro.map((paragraph, i) => (
               <Reveal as="p" key={i} variant="up" delay={0.08 + i * 0.08} className="story-para">
@@ -55,6 +43,11 @@ export default function StorySection() {
                 <li><span>Floors</span> Local limestone, honed</li>
                 <li><span>Frames</span> Solid teak, oiled</li>
               </ul>
+            </Reveal>
+
+            <Reveal as="p" variant="up" delay={0.28} className="story-note">
+              <Monogram size={1.05} />
+              <span>The quiet is the amenity.</span>
             </Reveal>
           </div>
         </div>

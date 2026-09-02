@@ -1,13 +1,11 @@
 import Container from "@/components/layout/Container";
-import Counter from "@/components/ui/Counter";
 import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
-import { overviewPanel, overviewStatement, propertyStats } from "@/data/property";
+import { overviewStatement, propertyStats } from "@/data/property";
 import { SECTION_IDS } from "@/lib/constants";
 
 /**
- * The first section after the hero carries its editorial scale forward while
- * deliberately leaving the main photography slot empty for the owner.
+ * A restrained, one-viewport introduction with one owner-supplied photo slot.
  */
 export default function OverviewSection() {
   return (
@@ -19,54 +17,34 @@ export default function OverviewSection() {
           <span>The premise</span>
         </Reveal>
 
-        <div className="premise-intro">
-          <Reveal as="h2" variant="mask" id="overview-title" className="premise-title">
-            <span>A home made for slower days.</span>
-          </Reveal>
-          <Reveal as="p" variant="up" delay={0.12} className="premise-intro-copy">
-            {overviewStatement}
-          </Reveal>
-        </div>
+        <div className="premise-layout">
+          <div className="premise-copy">
+            <Reveal as="h2" variant="mask" id="overview-title" className="premise-title">
+              <span>A home made for slower days.</span>
+            </Reveal>
 
-        <div className="premise-composition">
-          <Reveal variant="scale" className="image-placeholder premise-image-placeholder">
-            <span className="placeholder-kicker">Exterior photograph</span>
+            <Reveal as="p" variant="up" delay={0.08} className="premise-intro-copy">
+              {overviewStatement}
+            </Reveal>
+
+            <ul className="premise-ledger" aria-label="Property details">
+              {propertyStats.map((stat, index) => (
+                <Reveal as="li" key={stat.id} variant="up" delay={0.12 + index * 0.04}>
+                  <span className="ledger-value">{stat.value}{stat.suffix}</span>
+                  <span className="ledger-label">{stat.label}</span>
+                </Reveal>
+              ))}
+            </ul>
+          </div>
+
+          <Reveal variant="scale" delay={0.08} className="image-placeholder premise-image-placeholder">
             <div className="placeholder-spec">
-              <span>Recommended upload</span>
-              <strong>2400 × 1500 px</strong>
-              <small>Landscape · 8:5 · JPG or WebP</small>
+              <span>Image size</span>
+              <strong>2400 × 1600 px</strong>
+              <small>Landscape · 3:2</small>
             </div>
           </Reveal>
-
-          <Reveal variant="up" delay={0.14} className="premise-panel">
-            <Monogram size={10} className="premise-mark" />
-
-            <p className="premise-label">
-              <Monogram size={0.8} />
-              <span>{overviewPanel.label}</span>
-            </p>
-
-            <blockquote>
-              {overviewPanel.quoteLines.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
-            </blockquote>
-
-            <p className="premise-claim">{overviewPanel.claim}</p>
-          </Reveal>
         </div>
-
-        <ul className="premise-ledger">
-          {propertyStats.map((stat, i) => (
-            <Reveal as="li" key={stat.id} variant="up" delay={i * 0.07}>
-              <span className="ledger-value">
-                <Counter value={stat.value} suffix={stat.suffix} />
-              </span>
-              <span className="ledger-label">{stat.label}</span>
-              <span className="ledger-detail">{stat.detail}</span>
-            </Reveal>
-          ))}
-        </ul>
       </Container>
     </section>
   );
