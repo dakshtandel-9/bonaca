@@ -6,21 +6,33 @@ export const SECTION_IDS = {
   stay: "stay",
   overview: "overview",
   story: "story",
+  rooms: "rooms",
   gallery: "gallery",
-  experience: "experience",
+  moments: "moments",
   amenities: "amenities",
+  reviews: "reviews",
   location: "location",
   booking: "booking",
 } as const;
 
 export type SectionId = (typeof SECTION_IDS)[keyof typeof SECTION_IDS];
 
-/** Base directories for property photography once real assets are added. */
-export const IMAGE_PATHS = {
-  exterior: "/images/property/exterior",
-  interior: "/images/property/interior",
-  rooms: "/images/property/rooms",
-  outdoor: "/images/property/outdoor",
-  gallery: "/images/property/gallery",
-  branding: "/images/branding",
+/** Every photograph used on the site, resolved from one place. */
+export const IMAGES = {
+  /** Blue-hour approach shot, cropped two ways and art-directed in the hero. */
+  heroWide: "/images/bonaca/hero/hero-wide.png",
+  heroTall: "/images/bonaca/hero/hero-tall.png",
+  /**
+   * The Premise band photograph. Drop the file at exactly this path and it
+   * appears automatically — see public/images/bonaca/premise/README.md for
+   * the required dimensions.
+   */
+  premise: "/images/bonaca/premise/premise-wide.jpg",
+  courtyard: "/images/bonaca/hero/hero-main.jpg",
+  living: "/images/bonaca/gallery/living-room.jpg",
+  bedroom: "/images/bonaca/gallery/bedroom.jpg",
+  fields: "/images/bonaca/gallery/exterior-02.jpg",
+  /** Trimmed to the wordmark's bounding box (468×118) so it scales predictably. */
+  logoDark: "/images/bonaca/branding/logo-dark-trim.png",
+  logoLight: "/images/bonaca/branding/logo-light-trim.png",
 } as const;

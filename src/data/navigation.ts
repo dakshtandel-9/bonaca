@@ -18,38 +18,30 @@ export const mainNavigation: NavigationItem[] = [
 export const footerLinkGroups: FooterLinkGroup[] = [
   {
     id: "explore",
-    title: "Quick Links",
+    title: "Explore",
     items: [
-      { id: "stay", label: "Stay", href: `#${SECTION_IDS.stay}` },
+      { id: "story", label: "The House", href: `#${SECTION_IDS.story}` },
+      { id: "rooms", label: "Spaces", href: `#${SECTION_IDS.rooms}` },
       { id: "gallery", label: "Gallery", href: `#${SECTION_IDS.gallery}` },
-      {
-        id: "amenities",
-        label: "Amenities",
-        href: `#${SECTION_IDS.amenities}`,
-      },
+      { id: "moments", label: "A Day Here", href: `#${SECTION_IDS.moments}` },
       { id: "location", label: "Location", href: `#${SECTION_IDS.location}` },
     ],
   },
   {
     id: "guest-information",
-    title: "Guest Information",
+    title: "Guests",
     items: [
-      {
-        id: "book",
-        label: "Book Your Stay",
-        href: `#${SECTION_IDS.booking}`,
-      },
-      // PLACEHOLDER: these pages do not exist yet.
-      { id: "policies", label: "Stay Policies", href: "#" },
-      { id: "faq", label: "FAQ", href: "#" },
-      { id: "house-rules", label: "House Rules", href: "#" },
+      { id: "book", label: "Book Your Stay", href: `#${SECTION_IDS.booking}` },
+      { id: "amenities", label: "Amenities", href: `#${SECTION_IDS.amenities}` },
+      { id: "reviews", label: "Reviews", href: `#${SECTION_IDS.reviews}` },
+      { id: "faq", label: "Questions", href: "#faq" },
     ],
   },
 ];
 
-/** PLACEHOLDER: legal pages are not built yet. */
+/** ⚠️ Legal pages are not built yet — these anchors go nowhere. */
 export const legalLinks: NavigationItem[] = [
-  { id: "privacy", label: "Privacy Policy", href: "#" },
+  { id: "privacy", label: "Privacy", href: "#" },
   { id: "terms", label: "Terms", href: "#" },
 ];
 

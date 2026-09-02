@@ -10,7 +10,7 @@ export const bookingPlatforms: BookingPlatform[] = [
     id: "airbnb",
     name: "Airbnb",
     url: siteConfig.links.airbnb,
-    description: "Check availability on Airbnb",
+    description: "Live calendar, instant confirmation",
     external: true,
     primary: true,
   },
@@ -18,7 +18,7 @@ export const bookingPlatforms: BookingPlatform[] = [
     id: "booking",
     name: "Booking.com",
     url: siteConfig.links.booking,
-    description: "View the listing on Booking.com",
+    description: "Free cancellation options",
     external: true,
     primary: false,
   },
@@ -26,15 +26,7 @@ export const bookingPlatforms: BookingPlatform[] = [
     id: "agoda",
     name: "Agoda",
     url: siteConfig.links.agoda,
-    description: "View the listing on Agoda",
-    external: true,
-    primary: false,
-  },
-  {
-    id: "google-maps",
-    name: "Google Maps",
-    url: siteConfig.links.googleMaps,
-    description: "Find the property on Google Maps",
+    description: "Seasonal rates",
     external: true,
     primary: false,
   },
@@ -42,7 +34,7 @@ export const bookingPlatforms: BookingPlatform[] = [
     id: "whatsapp",
     name: "WhatsApp",
     url: siteConfig.contact.whatsapp,
-    description: "Send a direct enquiry on WhatsApp",
+    description: "Ask us anything, directly",
     external: true,
     primary: false,
   },
@@ -51,3 +43,8 @@ export const bookingPlatforms: BookingPlatform[] = [
 /** The single preferred booking destination, used by the header and hero. */
 export const primaryBookingPlatform: BookingPlatform =
   bookingPlatforms.find((platform) => platform.primary) ?? bookingPlatforms[0];
+
+/** Everything except the primary, for the secondary tile row. */
+export const secondaryBookingPlatforms = bookingPlatforms.filter(
+  (platform) => !platform.primary,
+);

@@ -1,38 +1,38 @@
 import Container from "@/components/layout/Container";
+import Icon from "@/components/ui/Icon";
+import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { amenities } from "@/data/amenities";
 import { SECTION_IDS } from "@/lib/constants";
 
-const amenityMarks: Record<string, string> = {
-  wifi: "⌁",
-  "air-conditioning": "✣",
-  tv: "▣",
-  kitchen: "◇",
-  parking: "P",
-  water: "≈",
-  garden: "⌇",
-  support: "24",
-};
-
+/**
+ * Dark band. A hairline register rather than a grid of boxes: each row is a
+ * rule that lights up on hover, with the icon sitting in the left margin.
+ */
 export default function AmenitiesSection() {
   return (
-    <section id={SECTION_IDS.amenities} aria-labelledby="amenities-title">
+    <section id={SECTION_IDS.amenities} className="amenities band-dark" aria-labelledby="amenities-title">
+      <span className="grain" aria-hidden="true" />
+
       <Container>
         <SectionHeader
+          index="06"
+          eyebrow="Amenities"
           headingId="amenities-title"
-          eyebrow="Comfort, considered"
-          title="Everything you need. Nothing you don’t."
-          description="Thoughtful essentials, quietly taken care of."
+          title="Everything, quietly handled."
+          description="The list is short because everything on it actually works."
+          layout="split"
         />
 
-        <ul>
-          {amenities.map((amenity) => (
-            /* data-icon-key is where an icon will be attached in the design phase. */
-            <li key={amenity.id} data-icon-key={amenity.iconKey}>
-              <span className="amenity-mark" aria-hidden="true">{amenityMarks[amenity.iconKey]}</span>
+        <ul className="amenities-list">
+          {amenities.map((amenity, i) => (
+            <Reveal as="li" key={amenity.id} variant="up" delay={(i % 4) * 0.05}>
+              <span className="amenity-icon">
+                <Icon name={amenity.iconKey} />
+              </span>
               <h3>{amenity.name}</h3>
               <p>{amenity.description}</p>
-            </li>
+            </Reveal>
           ))}
         </ul>
       </Container>

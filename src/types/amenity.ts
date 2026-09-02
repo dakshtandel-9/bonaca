@@ -1,16 +1,13 @@
-/**
- * Icon identifier for an amenity. Resolved to an actual icon during the
- * design phase; no icon library is installed yet.
- */
+/** Icon identifier for an amenity, resolved to an inline SVG in ui/Icon.tsx. */
 export type AmenityIconKey =
+  | "home"
   | "wifi"
-  | "air-conditioning"
-  | "tv"
+  | "climate"
   | "kitchen"
   | "parking"
   | "water"
-  | "garden"
-  | "support";
+  | "leaf"
+  | "bell";
 
 export interface Amenity {
   id: string;

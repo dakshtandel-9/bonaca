@@ -1,56 +1,53 @@
 import type { Amenity } from "@/types/amenity";
 
-/**
- * PLACEHOLDER amenities. `iconKey` is a plain identifier for now — icons are
- * chosen during the design phase, so no icon library is installed.
- */
+/** `iconKey` maps to an inline SVG in components/ui/Icon.tsx — no icon library. */
 export const amenities: Amenity[] = [
   {
+    id: "entire-home",
+    name: "The whole house",
+    description: "One booking at a time. You will not meet another guest.",
+    iconKey: "home",
+  },
+  {
     id: "wifi",
-    name: "High-Speed Wi-Fi",
-    description: "Reliable connectivity throughout the house.",
+    name: "High-speed Wi-Fi",
+    description: "Strong enough to work from, across every room and the courtyard.",
     iconKey: "wifi",
   },
   {
     id: "air-conditioning",
-    name: "Air Conditioning",
-    description: "Climate control in every bedroom and living area.",
-    iconKey: "air-conditioning",
-  },
-  {
-    id: "smart-tv",
-    name: "Smart TV",
-    description: "Streaming-ready screen in the main living space.",
-    iconKey: "tv",
+    name: "Air conditioning",
+    description: "In every bedroom, with ceiling fans through the living spaces.",
+    iconKey: "climate",
   },
   {
     id: "kitchen",
-    name: "Fully Equipped Kitchen",
-    description: "Cook as you would at home, with everything to hand.",
+    name: "Full kitchen",
+    description: "Cook as you would at home, or hand it to the caretaker.",
     iconKey: "kitchen",
   },
   {
     id: "parking",
-    name: "Private Parking",
-    description: "Off-street parking on the property.",
+    name: "Private parking",
+    description: "Off-street, inside the gate, room for two cars.",
     iconKey: "parking",
   },
   {
     id: "hot-water",
-    name: "Hot Water",
-    description: "Round-the-clock hot water in all bathrooms.",
+    name: "Hot water, always",
+    description: "Round-the-clock in all three bathrooms.",
     iconKey: "water",
   },
   {
     id: "garden",
-    name: "Garden Space",
-    description: "Private outdoor seating surrounded by greenery.",
-    iconKey: "garden",
+    name: "Courtyard & garden",
+    description: "Walled, planted and lit for the evening.",
+    iconKey: "leaf",
   },
   {
     id: "support",
-    name: "24/7 Support",
-    description: "A caretaker on call for anything you need.",
-    iconKey: "support",
+    name: "Caretaker on call",
+    description: "On the property, reachable at any hour, invisible unless wanted.",
+    iconKey: "bell",
   },
 ];

@@ -4,12 +4,21 @@ interface ContainerProps {
   children: ReactNode;
   /** Element to render, so containers stay semantically correct. */
   as?: ElementType;
+  /** "wide" removes the max-width cap for full-bleed bands. */
+  width?: "default" | "wide" | "narrow";
+  className?: string;
 }
 
-/**
- * Structural width wrapper. It only centres content and applies horizontal
- * padding — all visual styling is deliberately left to the design phase.
- */
-export default function Container({ children, as: Tag = "div" }: ContainerProps) {
-  return <Tag className="container">{children}</Tag>;
+/** Structural width wrapper: centring and horizontal gutters, nothing more. */
+export default function Container({
+  children,
+  as: Tag = "div",
+  width = "default",
+  className,
+}: ContainerProps) {
+  return (
+    <Tag className={className ? `container ${className}` : "container"} data-width={width}>
+      {children}
+    </Tag>
+  );
 }
