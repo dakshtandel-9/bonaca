@@ -44,3 +44,4 @@ and property photography to the sitemap automatically.
 
 Set `NEXT_PUBLIC_SITE_URL` during the build if the deployment uses a custom
 domain; otherwise the configured Sites URL is the canonical origin.
+# bonaca
