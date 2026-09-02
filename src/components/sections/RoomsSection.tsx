@@ -72,8 +72,8 @@ export default function RoomsSection() {
                   <Image
                     src={room.image}
                     alt={`${room.name} at Bonaca`}
-                    width={1800}
-                    height={1350}
+                    width={1536}
+                    height={1024}
                     sizes="(max-width: 900px) 100vw, 58vw"
                     style={{ objectPosition: room.focus }}
                   />

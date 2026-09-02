@@ -12,11 +12,6 @@ export interface Room {
   facts: string[];
 }
 
-/**
- * ⚠️ Only four distinct photographs exist today, so several spaces reuse one
- * image with a different crop. Add real photography per room and update
- * `image` — the layout takes any number of rooms.
- */
 export const rooms: Room[] = [
   {
     id: "courtyard",
@@ -26,7 +21,7 @@ export const rooms: Room[] = [
     description:
       "Stone underfoot, walls on three sides and the sky on the fourth. It holds the heat of the day just long enough for the evening.",
     image: IMAGES.courtyard,
-    focus: "50% 65%",
+    focus: "50% 50%",
     facts: ["Open air", "Evening lighting", "Seats 10"],
   },
   {
@@ -37,7 +32,7 @@ export const rooms: Room[] = [
     description:
       "A sunken floor, a long low sofa and a teak beam overhead. The room everyone drifts back to without deciding to.",
     image: IMAGES.living,
-    focus: "55% 55%",
+    focus: "50% 52%",
     facts: ["Sunken lounge", "Reading corner", "Opens to courtyard"],
   },
   {
@@ -48,7 +43,7 @@ export const rooms: Room[] = [
     description:
       "Three rooms, each with its own bathroom, linen you will want to steal, and a shuttered window facing the fields.",
     image: IMAGES.bedroom,
-    focus: "50% 40%",
+    focus: "50% 50%",
     facts: ["3 en-suite", "Blackout shutters", "King beds"],
   },
   {

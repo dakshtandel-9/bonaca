@@ -28,10 +28,10 @@ export const IMAGES = {
    * the required dimensions.
    */
   premise: "/images/bonaca/premise/premise-wide.jpg",
-  courtyard: "/images/bonaca/hero/hero-main.jpg",
-  living: "/images/bonaca/gallery/living-room.jpg",
-  bedroom: "/images/bonaca/gallery/bedroom.jpg",
-  fields: "/images/bonaca/gallery/exterior-02.jpg",
+  courtyard: "/images/bonaca/rooms/courtyard.png",
+  living: "/images/bonaca/rooms/living-room.png",
+  bedroom: "/images/bonaca/rooms/bedroom.png",
+  fields: "/images/bonaca/rooms/the-green.png",
   /** Trimmed to the wordmark's bounding box (468×118) so it scales predictably. */
   logoDark: "/images/bonaca/branding/logo-dark-trim.png",
   logoLight: "/images/bonaca/branding/logo-light-trim.png",
