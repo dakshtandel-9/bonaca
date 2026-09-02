@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import Container from "@/components/layout/Container";
 import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
@@ -12,12 +14,15 @@ export default function StorySection() {
     <section id={SECTION_IDS.story} className="story band-dark" aria-labelledby="story-title">
       <Container>
         <div className="story-layout">
-          <Reveal variant="scale" className="image-placeholder story-image-placeholder">
-            <div className="placeholder-spec">
-              <span>Image size</span>
-              <strong>1800 × 1350 px</strong>
-              <small>Landscape · 4:3</small>
-            </div>
+          <Reveal variant="scale" className="story-image-frame">
+            <Image
+              className="story-photo"
+              src="/images/bonaca/story/sec3.png"
+              alt="Bonaca's pool courtyard and warmly illuminated villa at blue hour"
+              width={1536}
+              height={1024}
+              sizes="(max-width: 759px) 100vw, 54vw"
+            />
           </Reveal>
 
           <div className="story-text">
