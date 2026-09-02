@@ -4,7 +4,7 @@ import Container from "@/components/layout/Container";
 import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
 import { property } from "@/data/property";
-import { SECTION_IDS } from "@/lib/constants";
+import { IMAGES, SECTION_IDS } from "@/lib/constants";
 
 /**
  * A simple dark chapter with one owner-supplied photo slot.
@@ -17,7 +17,7 @@ export default function StorySection() {
           <Reveal variant="scale" className="story-image-frame">
             <Image
               className="story-photo"
-              src="/images/bonaca/story/sec3.png"
+              src={IMAGES.story}
               alt="Bonaca's pool courtyard and warmly illuminated villa at blue hour"
               width={1536}
               height={1024}

@@ -16,15 +16,16 @@ interface ExternalLinkProps {
  * A link that leaves the website. Always opens in a new tab with safe rel
  * attributes, so components never have to remember to set them.
  *
- * While a listing URL is still "#", the link degrades to an in-page jump to
- * the booking section rather than a dead anchor that scrolls to the top.
+ * While a listing URL is still "#", the link renders without an href: it keeps
+ * its styling but does not navigate. There is no in-page booking section to
+ * fall back to, and a bare "#" would just throw the visitor to the top.
  */
 export default function ExternalLink({ href, children, ...rest }: ExternalLinkProps) {
   if (isPlaceholderLink(href)) {
     return (
       <a
-        href="#booking"
         data-placeholder-link="true"
+        aria-disabled="true"
         title="Listing link coming soon"
         {...rest}
       >

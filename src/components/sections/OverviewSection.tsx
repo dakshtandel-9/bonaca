@@ -4,7 +4,7 @@ import Container from "@/components/layout/Container";
 import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
 import { overviewStatement, propertyStats } from "@/data/property";
-import { SECTION_IDS } from "@/lib/constants";
+import { IMAGES, SECTION_IDS } from "@/lib/constants";
 
 /**
  * A restrained, one-viewport introduction with one owner-supplied photo slot.
@@ -42,7 +42,7 @@ export default function OverviewSection() {
           <Reveal variant="scale" delay={0.08} className="premise-image-frame">
             <Image
               className="premise-image"
-              src="/images/bonaca/premise/sec2.png"
+              src={IMAGES.premise}
               alt="Bonaca's illuminated entrance and landscaped grounds at dusk"
               width={1536}
               height={1024}

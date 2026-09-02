@@ -1,13 +1,14 @@
 import Container from "@/components/layout/Container";
+import FlowingMenu from "@/components/ui/FlowingMenu";
 import Monogram from "@/components/ui/Monogram";
 import Reveal from "@/components/ui/Reveal";
 import { moments } from "@/data/moments";
 import { SECTION_IDS } from "@/lib/constants";
 
 /**
- * The Experience section, told as a single day. Rendered as a timeline with a
- * rule that draws itself down the page — a different rhythm from every other
- * section, and no photography required.
+ * The Experience section, told as a single day. The four hours are rows that
+ * run the full width of the band; hovering one pulls its photograph across in
+ * a marquee, entering from whichever edge the pointer crossed.
  */
 export default function MomentsSection() {
   return (
@@ -15,7 +16,7 @@ export default function MomentsSection() {
       <Container>
         <div className="moments-head">
           <Reveal as="p" variant="fade" className="section-eyebrow">
-            <span className="section-index">05</span>
+            <span className="section-index">06</span>
             <Monogram size={0.85} className="section-mark" />
             <span>A day here</span>
           </Reveal>
@@ -24,20 +25,21 @@ export default function MomentsSection() {
             <span>Sunrise to properly dark.</span>
           </Reveal>
         </div>
-
-        <ol className="moments-list">
-          {moments.map((moment, i) => (
-            <Reveal as="li" key={moment.id} variant="up" delay={i * 0.06}>
-              <span className="moment-time">{moment.time}</span>
-              <span className="moment-dot" aria-hidden="true" />
-              <div className="moment-body">
-                <h3>{moment.title}</h3>
-                <p>{moment.body}</p>
-              </div>
-            </Reveal>
-          ))}
-        </ol>
       </Container>
+
+      <Reveal variant="fade" className="moments-menu">
+        <FlowingMenu
+          items={moments.map((moment) => ({
+            id: moment.id,
+            label: moment.time,
+            text: moment.title,
+            note: moment.body,
+            image: moment.image,
+          }))}
+          marqueeBgColor="var(--ink-deep)"
+          marqueeTextColor="var(--sand)"
+        />
+      </Reveal>
     </section>
   );
 }

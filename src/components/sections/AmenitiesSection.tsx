@@ -16,7 +16,7 @@ export default function AmenitiesSection() {
 
       <Container>
         <SectionHeader
-          index="06"
+          index="07"
           eyebrow="Amenities"
           headingId="amenities-title"
           title="Everything, quietly handled."

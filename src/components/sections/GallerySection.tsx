@@ -4,14 +4,23 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
 import Container from "@/components/layout/Container";
+import Masonry from "@/components/ui/Masonry";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { galleryCategories, galleryItems } from "@/data/gallery";
 import { SECTION_IDS } from "@/lib/constants";
 
+/** Four across on a desktop, stepping down to a single column on a phone. */
+const GALLERY_COLUMNS = [
+  { min: 1100, columns: 4 },
+  { min: 760, columns: 3 },
+  { min: 520, columns: 2 },
+] as const;
+
 /**
- * Editorial grid on a dark band, with a lightbox that supports arrow keys and
+ * Masonry grid on a dark band, with a lightbox that supports arrow keys and
  * Escape. Filtering only changes which figures are shown, so the lightbox
- * always steps through what the visitor can actually see.
+ * always steps through what the visitor can actually see — and the grid
+ * re-flows to the remaining photographs rather than re-rendering.
  */
 export default function GallerySection() {
   const [filter, setFilter] = useState<string>("all");
@@ -83,29 +92,33 @@ export default function GallerySection() {
           </div>
         )}
 
-        <ul className="gallery-grid">
-          {visible.map((item, i) => (
-            <li key={item.id} data-category={item.category}>
-              <button type="button" onClick={() => setOpenIndex(i)}>
-                <figure>
-                  <Image
-                    src={item.src as string}
-                    alt={item.alt}
-                    width={item.width}
-                    height={item.height}
-                    sizes="(max-width: 700px) 86vw, (max-width: 1100px) 50vw, 40vw"
-                  />
-                  <figcaption>
-                    <span>{item.category}</span>
-                    <span className="gallery-zoom" aria-hidden="true">
-                      View
-                    </span>
-                  </figcaption>
-                </figure>
-              </button>
-            </li>
-          ))}
-        </ul>
+        <Masonry
+          items={visible}
+          className="gallery-grid"
+          breakpoints={GALLERY_COLUMNS}
+          gap={20}
+          animateFrom="bottom"
+          hoverScale={0.975}
+        >
+          {(item, i) => (
+            <button type="button" onClick={() => setOpenIndex(i)}>
+              <figure>
+                <Image
+                  src={item.src as string}
+                  alt={item.alt}
+                  fill
+                  sizes="(max-width: 520px) 92vw, (max-width: 760px) 46vw, (max-width: 1100px) 31vw, 23vw"
+                />
+                <figcaption>
+                  <span>{item.category}</span>
+                  <span className="gallery-zoom" aria-hidden="true">
+                    View
+                  </span>
+                </figcaption>
+              </figure>
+            </button>
+          )}
+        </Masonry>
       </Container>
 
       {current && (

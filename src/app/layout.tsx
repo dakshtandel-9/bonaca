@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 
+import { absoluteUrl, isSiteLaunchReady } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
 import { buildStructuredData } from "@/lib/structured-data";
 
@@ -26,18 +27,41 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: siteConfig.name,
+  category: "travel",
+  referrer: "origin-when-cross-origin",
+  alternates: {
+    canonical: "/",
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  manifest: "/manifest.webmanifest",
+  robots: {
+    index: isSiteLaunchReady,
+    follow: true,
+    googleBot: {
+      index: isSiteLaunchReady,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     type: "website",
     siteName: siteConfig.name,
     title: siteConfig.title,
     description: siteConfig.description,
     url: siteConfig.url,
-    // PLACEHOLDER: add the real image at public/social/og-image.png (1200x630).
+    locale: siteConfig.locale,
     images: [
       {
-        url: "/social/og-image.png",
+        url: absoluteUrl("/social/og-image.png"),
         width: 1200,
         height: 630,
+        type: "image/png",
         alt: `${siteConfig.name} — private retreat`,
       },
     ],
@@ -46,7 +70,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: siteConfig.title,
     description: siteConfig.description,
-    images: ["/social/og-image.png"],
+    images: [absoluteUrl("/social/og-image.png")],
   },
 };
 
@@ -60,8 +84,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${serif.variable} ${sans.variable}`}>
+    <html lang={siteConfig.language} className={`${serif.variable} ${sans.variable}`}>
       <body>
+        <a className="skip-link" href="#main-content">
+          Skip to main content
+        </a>
         {children}
         <script
           type="application/ld+json"

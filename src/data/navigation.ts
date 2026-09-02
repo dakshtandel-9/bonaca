@@ -11,8 +11,6 @@ export const mainNavigation: NavigationItem[] = [
   { id: "stay", label: "Stay", href: `#${SECTION_IDS.stay}` },
   { id: "gallery", label: "Gallery", href: `#${SECTION_IDS.gallery}` },
   { id: "amenities", label: "Amenities", href: `#${SECTION_IDS.amenities}` },
-  { id: "location", label: "Location", href: `#${SECTION_IDS.location}` },
-  { id: "contact", label: "Contact", href: `#${SECTION_IDS.booking}` },
 ];
 
 export const footerLinkGroups: FooterLinkGroup[] = [
@@ -24,17 +22,14 @@ export const footerLinkGroups: FooterLinkGroup[] = [
       { id: "rooms", label: "Spaces", href: `#${SECTION_IDS.rooms}` },
       { id: "gallery", label: "Gallery", href: `#${SECTION_IDS.gallery}` },
       { id: "moments", label: "A Day Here", href: `#${SECTION_IDS.moments}` },
-      { id: "location", label: "Location", href: `#${SECTION_IDS.location}` },
     ],
   },
   {
     id: "guest-information",
     title: "Guests",
     items: [
-      { id: "book", label: "Book Your Stay", href: `#${SECTION_IDS.booking}` },
       { id: "amenities", label: "Amenities", href: `#${SECTION_IDS.amenities}` },
       { id: "reviews", label: "Reviews", href: `#${SECTION_IDS.reviews}` },
-      { id: "faq", label: "Questions", href: "#faq" },
     ],
   },
 ];

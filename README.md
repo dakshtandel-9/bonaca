@@ -16,6 +16,7 @@ No CSS framework, UI kit, icon set or animation library.
 npm run dev     # http://localhost:3000
 npm run build   # production build
 npm run lint    # eslint
+npm run check:seo
 npx tsc --noEmit
 ```
 
@@ -29,8 +30,17 @@ npx tsc --noEmit
 - `src/types` — content types
 - `src/lib/site-config.ts` — site details and every external booking URL
 
-## Current phase
+## SEO and launch state
 
-Structure only. No visual design, theme, animation or decorative UI has been
-introduced yet. Content across `src/data` and `src/lib/site-config.ts` is
-placeholder text and `#` URLs awaiting real client information.
+The production build validates the title, description, canonical URL, Open
+Graph and X cards, JSON-LD, manifest, sitemap, robots directives, document
+language, main landmark and heading structure.
+
+The site automatically stays `noindex` while placeholder business details or
+seeded testimonials remain. To enable indexing, replace every value marked
+`REPLACE` in `src/lib/site-config.ts` and replace every `placeholder-*` review
+in `src/data/reviews.ts`. The next build then enables indexing and adds the page
+and property photography to the sitemap automatically.
+
+Set `NEXT_PUBLIC_SITE_URL` during the build if the deployment uses a custom
+domain; otherwise the configured Sites URL is the canonical origin.

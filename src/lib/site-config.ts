@@ -7,13 +7,19 @@
  *  Search this file for "REPLACE" — when no hits remain, the site is launch
  *  ready. Nothing below is hardcoded anywhere else in the codebase.
  */
+const defaultSiteUrl = "https://bonaca-retreat.dakshtandel.chatgpt.site";
+
+/** The deployment origin can be overridden at build time for a custom domain. */
+const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL || defaultSiteUrl).replace(/\/+$/, "");
+
 export const siteConfig = {
   name: "Bonaca",
   title: "Bonaca — A Private Retreat",
   description:
     "Bonaca is a private villa kept for one group at a time — limestone courtyards, unhurried rooms and an open green horizon.",
-  url: "https://bonaca-retreat.dakshtandel.chatgpt.site",
+  url: siteUrl,
   locale: "en_IN",
+  language: "en-IN",
 
   /** Short line under the logo in the footer and in social previews. */
   tagline: "A private retreat rooted in calm.",
@@ -38,19 +44,11 @@ export const siteConfig = {
     googleMaps: "#", // ⚠️ REPLACE with the Google Maps place link
   },
 
-  /**
-   * Google Maps embed for the Location section.
-   * Get it from Google Maps → Share → Embed a map → copy the src="..." value.
-   * Leave as null and a tasteful typographic panel is shown instead.
-   */
-  mapEmbedUrl: null as string | null, // ⚠️ REPLACE
-
-  /** Where the property is. Shown in the hero meta bar and the footer. */
+  /** Where the property is. Shown in the footer. */
   place: {
     locality: "Location to be confirmed", // ⚠️ REPLACE e.g. "Alibaug, Maharashtra"
     region: "India", // ⚠️ REPLACE
-    /** Only shared with confirmed guests — kept deliberately vague in public. */
-    addressNote: "Full address is shared once your booking is confirmed.",
+    countryCode: "IN",
   },
 } as const;
 

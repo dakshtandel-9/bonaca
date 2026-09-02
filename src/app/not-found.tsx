@@ -1,18 +1,23 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import Container from "@/components/layout/Container";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Page not found",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function NotFound() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main-content">
         <section aria-labelledby="not-found-title">
           <Container>
             <h1 id="not-found-title">Page not found</h1>

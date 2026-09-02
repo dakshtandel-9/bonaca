@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 
+import { isSiteLaunchReady } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
 
 export const dynamic = "force-static";
@@ -10,6 +11,7 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: `${siteConfig.url}/sitemap.xml`,
+    ...(isSiteLaunchReady ? { sitemap: `${siteConfig.url}/sitemap.xml` } : {}),
+    host: siteConfig.url,
   };
 }
