@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import Container from "@/components/layout/Container";
 import Masonry from "@/components/ui/Masonry";
@@ -34,22 +34,30 @@ export default function GallerySection({ content }: { content: SiteContent }) {
   const visible =
     filter === "all" ? galleryItems : galleryItems.filter((item) => item.category === filter);
 
-  const close = useCallback(() => setOpenIndex(null), []);
-  const step = useCallback(
-    (delta: number) =>
-      setOpenIndex((current) =>
-        current === null ? null : (current + delta + visible.length) % visible.length,
-      ),
-    [visible.length],
-  );
+  const count = visible.length;
+  const close = () => setOpenIndex(null);
 
+  /* Wraps at both ends, so the arrows never dead-end on the first or last
+     photograph of whatever the current filter is showing. */
+  const step = (delta: number) =>
+    setOpenIndex((current) =>
+      current === null || count === 0 ? null : (current + delta + count) % count,
+    );
+
+  /* The listener is rebuilt when the visible count changes rather than closing
+     over a stale one, which is why the handlers above are plain functions: they
+     are only ever read here and on the buttons, never compared. */
   useEffect(() => {
     if (openIndex === null) return;
 
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-      if (event.key === "ArrowRight") step(1);
-      if (event.key === "ArrowLeft") step(-1);
+      if (event.key === "Escape") setOpenIndex(null);
+      if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
+        const delta = event.key === "ArrowRight" ? 1 : -1;
+        setOpenIndex((current) =>
+          current === null || count === 0 ? null : (current + delta + count) % count,
+        );
+      }
     };
 
     const previous = document.body.style.overflow;
@@ -60,7 +68,7 @@ export default function GallerySection({ content }: { content: SiteContent }) {
       document.body.style.overflow = previous;
       window.removeEventListener("keydown", onKey);
     };
-  }, [openIndex, close, step]);
+  }, [openIndex, count]);
 
   const current = openIndex === null ? null : visible[openIndex];
 

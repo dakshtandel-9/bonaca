@@ -18,8 +18,12 @@ export default async function AdminPageEditor({ params }: PageProps<"/admin/page
     readStoredContent(),
   ]);
 
+  /* Keyed on the page group so moving between them mounts a fresh editor.
+     Without it React would reuse the instance and keep the previous group's
+     state — including its unsaved edits — under the new heading. */
   return (
     <ContentEditor
+      key={schema.id}
       page={schema}
       initialContent={content}
       updatedAt={stored?.updatedAt ?? null}

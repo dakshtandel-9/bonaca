@@ -1,10 +1,11 @@
 import MediaLibrary from "@/components/admin/MediaLibrary";
+import type { MediaItem } from "@/lib/cms/types";
 import { listMedia, mediaBackend } from "@/lib/server/media";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminMediaPage() {
-  let items = [];
+  let items: MediaItem[] = [];
   let error: string | null = null;
 
   try {

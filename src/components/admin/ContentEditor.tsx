@@ -33,14 +33,6 @@ export default function ContentEditor({
 
   const dirty = state === "dirty" || state === "error";
 
-  /* A page group is remounted on navigation, so a fresh server payload has to
-     replace state — otherwise switching pages would show the previous one. */
-  useEffect(() => {
-    setContent(initialContent);
-    setState("idle");
-    setMessage(null);
-  }, [initialContent, page.id]);
-
   useEffect(() => {
     if (!dirty) return;
 

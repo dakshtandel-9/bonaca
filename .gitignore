@@ -41,3 +41,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# CRM
+# The on-disk fallback content store, used when Firebase is not configured.
+/.data/
+# Uploads written locally when Cloudflare R2 is not configured.
+/public/uploads/

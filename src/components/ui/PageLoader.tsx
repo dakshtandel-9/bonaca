@@ -5,8 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import Monogram from "@/components/ui/Monogram";
-import { IMAGES } from "@/lib/constants";
-import { siteConfig } from "@/lib/site-config";
 
 /**
  * How long the curtain holds before it lifts, in milliseconds. The meter takes
@@ -28,7 +26,15 @@ const HOLD_MS = 1000;
  * requestAnimationFrame counter stalls the moment the tab goes to the
  * background and comes back reading a number the bar has long passed.
  */
-export default function PageLoader() {
+export default function PageLoader({
+  name,
+  tagline,
+  logo,
+}: {
+  name: string;
+  tagline: string;
+  logo: string;
+}) {
   const pathname = usePathname();
   const [loadedRoute, setLoadedRoute] = useState(pathname);
   const [visible, setVisible] = useState(true);
@@ -63,7 +69,7 @@ export default function PageLoader() {
       style={{ "--loader-hold": `${HOLD_MS}ms` } as React.CSSProperties}
     >
       <p className="sr-only" role="status">
-        {visible ? `Loading ${siteConfig.name}` : ""}
+        {visible ? `Loading ${name}` : ""}
       </p>
 
       <div className="page-loader-inner" aria-hidden="true">
@@ -71,14 +77,14 @@ export default function PageLoader() {
 
         <Image
           className="page-loader-wordmark"
-          src={IMAGES.logoLight}
+          src={logo}
           alt=""
           width={468}
           height={118}
           preload
         />
 
-        <p className="page-loader-tagline">{siteConfig.tagline}</p>
+        <p className="page-loader-tagline">{tagline}</p>
 
         {/* Keyed on the route so the fill restarts from empty even when the
             visitor navigates again before the previous hold has run out. */}

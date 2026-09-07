@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { isPlaceholderLink } from "@/lib/site-config";
+import { isPlaceholderLink } from "@/lib/cms/derive";
 
 interface ExternalLinkProps {
   href: string;

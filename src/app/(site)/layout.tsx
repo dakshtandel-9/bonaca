@@ -20,7 +20,11 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
           __html: "<style>.page-loader{display:none!important}</style>",
         }}
       />
-      <PageLoader />
+      <PageLoader
+        name={content.site.name}
+        tagline={content.site.tagline}
+        logo={content.site.branding.logoLight}
+      />
 
       <a className="skip-link" href="#main-content">
         Skip to main content
