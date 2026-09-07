@@ -47,17 +47,37 @@ function getApp(): App | null {
   return cachedApp;
 }
 
-let cachedDb: Firestore | null = null;
+/**
+ * The Firestore handle lives on `globalThis`, not in a module variable.
+ *
+ * Next.js gives each route entry its own copy of this module, while
+ * firebase-admin keeps a single Firestore instance per app for the whole
+ * process. A module-local cache therefore starts out empty in the second copy,
+ * which then reaches the already-initialised Firestore and calls `settings()`
+ * on it again — that throws, and during `next build` it fails the whole build.
+ *
+ * Keying off the global symbol registry gives every copy the same handle, so
+ * `settings()` runs exactly once per process, whichever copy gets there first.
+ * `settings()` is also the only way to set `ignoreUndefinedProperties`:
+ * `initializeFirestore()` forwards `preferRest` and nothing else.
+ */
+const DB_KEY = Symbol.for("bonaca-cms.firestore");
+
+const globalForDb = globalThis as typeof globalThis & {
+  [DB_KEY]?: Firestore;
+};
 
 export function getDb(): Firestore | null {
-  if (cachedDb) return cachedDb;
+  const cached = globalForDb[DB_KEY];
+  if (cached) return cached;
 
   const app = getApp();
   if (!app) return null;
 
-  cachedDb = getFirestore(app);
-  cachedDb.settings({ ignoreUndefinedProperties: true });
-  return cachedDb;
+  const db = getFirestore(app);
+  db.settings({ ignoreUndefinedProperties: true });
+  globalForDb[DB_KEY] = db;
+  return db;
 }
 
 export const CONTENT_COLLECTION =
