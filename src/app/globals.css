@@ -253,6 +253,27 @@ a[data-variant="ghost"] {
 }
 a[data-variant="ghost"]:hover { border-bottom-color: currentColor; }
 
+/* Sits beside a primary link as the quieter of a pair — same box, no fill. */
+a[data-variant="outline"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 3.5rem;
+  padding-inline: 1.8rem;
+  border: 1px solid color-mix(in srgb, currentColor 38%, transparent);
+  border-radius: 999px;
+  font-size: var(--step-label);
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  transition: border-color 0.4s var(--ease), background 0.4s var(--ease), transform 0.4s var(--ease);
+}
+a[data-variant="outline"]:hover {
+  border-color: currentColor;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  transform: translateY(-2px);
+}
+
 a span[aria-hidden], .platform-arrow { transition: transform 0.35s var(--ease); }
 a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22rem, -0.22rem); }
 
@@ -288,6 +309,101 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
 [data-parallax] > * { transform: translate3d(0, var(--parallax, 0px), 0); }
 
 /* --------------------------------------------------------------------------
+   Page loader — plays on a refresh and on every route change
+   -------------------------------------------------------------------------- */
+
+/* Held by an attribute on <html> so the header's mobile menu can take the same
+   lock through its own inline style without the two fighting on cleanup. */
+html[data-loading] body { overflow: hidden; }
+
+.page-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  background: var(--ink-deep);
+  color: var(--sand-soft);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.55s var(--ease), visibility 0.55s;
+}
+.page-loader[data-visible] {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  /* Snaps on, lifts off slowly: on a route change the curtain has to cover the
+     new page before it paints, but there is no hurry getting out of the way. */
+  transition-duration: 0.16s, 0s;
+}
+
+/* The panel fades flat; the lockup is what carries the motion, drifting up as
+   the curtain goes so the exit reads as a lift rather than a dissolve. */
+.page-loader-inner {
+  display: grid;
+  justify-items: center;
+  padding-inline: var(--gutter);
+  text-align: center;
+  transition: transform 0.55s var(--ease), opacity 0.35s ease;
+}
+.page-loader:not([data-visible]) .page-loader-inner {
+  opacity: 0;
+  transform: translateY(-0.9rem);
+}
+.page-loader[data-visible] .page-loader-inner { transition-duration: 0.3s, 0.2s; }
+
+.page-loader-mark {
+  color: var(--sand);
+  animation: loader-mark 2.4s var(--ease) infinite;
+}
+/* A slow breath, not a spinner — the count is what reports progress. */
+@keyframes loader-mark {
+  0%, 100% { opacity: 0.55; transform: scale(0.97); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+.page-loader-wordmark {
+  width: clamp(9.5rem, 22vw, 13rem);
+  height: auto;
+  margin-top: 1.1rem;
+}
+
+.page-loader-tagline {
+  margin: 1.1rem 0 0;
+  color: color-mix(in srgb, var(--sand-soft) 52%, transparent);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.page-loader-track {
+  position: relative;
+  display: block;
+  width: min(17rem, 52vw);
+  height: 1px;
+  margin-top: clamp(2.2rem, 5vw, 3rem);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--sand-soft) 18%, transparent);
+}
+.page-loader-fill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(1);
+  transform-origin: left;
+  background: var(--sand);
+}
+/* Duration comes from the component, so the bar lands exactly as the hold ends. */
+.page-loader[data-visible] .page-loader-fill {
+  animation: loader-fill var(--loader-hold, 1000ms) linear forwards;
+}
+@keyframes loader-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* --------------------------------------------------------------------------
    Header
    -------------------------------------------------------------------------- */
 .site-header {
@@ -307,20 +423,34 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
   position: relative;
   z-index: 2;
   display: grid;
-  grid-template-columns: repeat(2, minmax(13rem, 1fr));
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: clamp(2rem, 4vw, 4rem);
+  gap: clamp(1.5rem, 3vw, 3.25rem);
   max-width: none;
   height: 100%;
   padding-inline: clamp(2rem, 4.15vw, 4.5rem);
 }
 
-.site-header[data-scrolled] {
-  height: 5.4rem;
+.site-header[data-scrolled] { height: 5.4rem; }
+
+/* The bar takes a surface once it is over content rather than over the hero —
+   and whenever the menu is open, so the bar and the panel read as one sheet. */
+.site-header[data-scrolled],
+.site-header[data-menu-open] {
   border-bottom: 1px solid rgb(244 229 207 / 10%);
   background: rgb(18 27 12 / 92%);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
+}
+
+/* Dims the page under the open panel. Sits below both the bar's container
+   (z-index 2) and the panel itself (z-index 1). */
+.site-header[data-menu-open]::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: rgb(12 18 8 / 74%);
 }
 
 .wordmark {
@@ -372,6 +502,111 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
   transition: background-color 0.35s ease, transform 0.35s var(--ease);
 }
 .site-header a[data-variant="header"]:hover { background: #faedd9; }
+
+/* Primary navigation. The bar is transparent over a dark hero and over the
+   dark opening band of every interior page, so the links are always cream. */
+.site-nav ul {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.1rem, 2.3vw, 2.4rem);
+}
+.site-nav a {
+  position: relative;
+  display: block;
+  padding-block: 0.4rem;
+  color: rgb(244 229 207 / 78%);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.35s var(--ease);
+}
+/* The rule is drawn at rest and scaled from the left, so the link does not
+   shift by a pixel when it becomes current. */
+.site-nav a::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s var(--ease);
+}
+.site-nav a:hover { color: #f8ecd9; }
+.site-nav a:hover::after { transform: scaleX(1); }
+.site-nav a[data-current] { color: #f8ecd9; }
+.site-nav a[data-current]::after { transform: scaleX(1); }
+.nav-label-short { display: none; }
+
+/* Shown only once the bar runs out of room for the links themselves. */
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgb(244 229 207 / 28%);
+}
+.nav-toggle-bars {
+  display: grid;
+  gap: 0.32rem;
+  width: 1.05rem;
+}
+.nav-toggle-bars > span {
+  display: block;
+  height: 1px;
+  background: currentColor;
+  transition: transform 0.35s var(--ease), opacity 0.25s ease;
+}
+[data-menu-open] .nav-toggle-bars > span:first-child { transform: translateY(0.165rem) rotate(45deg); }
+[data-menu-open] .nav-toggle-bars > span:last-child { transform: translateY(-0.165rem) rotate(-45deg); }
+
+.site-menu {
+  position: absolute;
+  inset: 100% 0 auto;
+  z-index: 1;
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.25rem clamp(1.35rem, 4vw, 3rem) 2rem;
+  border-bottom: 1px solid rgb(244 229 207 / 12%);
+  background: rgb(18 27 12 / 99%);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-0.6rem);
+  transition: opacity 0.35s ease, transform 0.4s var(--ease), visibility 0.35s;
+}
+[data-menu-open] .site-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+}
+.site-menu nav ul { display: grid; }
+.site-menu a {
+  display: block;
+  padding-block: 0.9rem;
+  border-bottom: 1px solid rgb(244 229 207 / 12%);
+  color: rgb(244 229 207 / 82%);
+  font-family: var(--serif);
+  font-size: 1.6rem;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+}
+.site-menu a[data-current] { color: var(--sand); }
+.site-menu-call {
+  border: 0;
+  color: rgb(244 229 207 / 62%);
+  font-family: var(--sans);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
 
 /* --------------------------------------------------------------------------
    01 — Hero
@@ -1300,7 +1535,9 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
   gap: 0.25rem;
   color: var(--sand-deep);
 }
+.star-rating { display: flex; gap: 0.22rem; color: var(--accent); }
 .review-star { width: 0.9rem; height: 0.9rem; fill: currentColor; }
+.review-star[data-empty] { opacity: 0.26; }
 
 .wall-card blockquote { margin: 1rem 0 0; }
 .wall-card blockquote p {
@@ -1464,6 +1701,603 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
   translate: 0 0.14em;
 }
 
+/* ==========================================================================
+   INTERIOR PAGES — accommodation, experiences, know before you book
+   The homepage is one long scroll of set pieces; these three are documents.
+   They share an opening band, a subhead, and nothing else.
+   ========================================================================== */
+
+/* The bar is fixed and transparent until the visitor scrolls, so every
+   interior page opens on something dark enough to carry the cream wordmark. */
+.page-hero {
+  padding-block: calc(7.25rem + clamp(3rem, 6vw, 6rem)) clamp(3.5rem, 7vw, 7rem) !important;
+}
+.page-hero-title {
+  max-width: 18ch;
+  font-family: var(--serif);
+  font-size: var(--step-h2);
+  font-weight: 300;
+  letter-spacing: -0.032em;
+  line-height: 0.98;
+  text-wrap: balance;
+}
+.page-hero-lede {
+  max-width: 44rem;
+  margin: 1.6rem 0 0;
+  color: var(--fg-muted);
+  font-size: var(--step-lede);
+  line-height: 1.72;
+}
+.page-hero-lede a {
+  border-bottom: 1px solid color-mix(in srgb, currentColor 45%, transparent);
+  color: var(--accent);
+}
+.page-hero-lede a:hover { border-bottom-color: currentColor; }
+
+.page-hero-facts ul {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+  margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  padding-top: 1.6rem;
+  border-top: 1px solid var(--rule);
+}
+.page-hero-facts strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 3.4vw, 2.9rem);
+  font-weight: 300;
+  line-height: 1;
+}
+.page-hero-facts span {
+  display: block;
+  margin-top: 0.4rem;
+  color: var(--fg-faint);
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* The shared h3 above a block of terms. Not a section heading — those still
+   come from SectionHeader — so it stays small and lettered rather than serif. */
+.villa-subhead {
+  margin: 0 0 1.4rem;
+  color: var(--fg-faint);
+  font-size: var(--step-label);
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
+/* --- Accommodation: the three opening frames ---------------------------- */
+.villa-triptych {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: clamp(0.6rem, 1vw, 1rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+.villa-triptych-stack {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(0.6rem, 1vw, 1rem);
+}
+.villa-triptych figure {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--sand-soft) 6%, transparent);
+}
+.villa-triptych img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease);
+}
+.villa-triptych-lead { aspect-ratio: 4 / 3; }
+.villa-triptych figure:hover img { transform: scale(1.03); }
+
+/* --- Accommodation: price and tariff ------------------------------------ */
+.rate-lead {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+  gap: clamp(2rem, 5vw, 5rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  padding-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  border-bottom: 1px solid var(--rule);
+}
+.rate-from {
+  margin: 0;
+  color: var(--fg-faint);
+  font-size: var(--step-label);
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+.rate-amount {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin: 0.6rem 0 0;
+  font-family: var(--serif);
+  font-size: clamp(3rem, 6.5vw, 5.4rem);
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+.rate-amount span {
+  color: var(--fg-faint);
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.rate-note { max-width: 24rem; margin: 1rem 0 0; color: var(--fg-muted); }
+.rate-minimum {
+  margin: 0.35rem 0 0;
+  color: var(--fg-faint);
+  font-size: 0.78rem;
+}
+
+.rate-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.9rem; }
+.rate-actions-note {
+  flex: 1 1 100%;
+  max-width: 30rem;
+  margin: 0.4rem 0 0;
+  color: var(--fg-faint);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.rate-table-wrap { margin-top: clamp(2.5rem, 5vw, 3.5rem); }
+.rate-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+.rate-table thead th {
+  padding: 0 0 0.9rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--fg-faint);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.rate-table thead th:last-child,
+.rate-table .rate-cell { text-align: right; }
+.rate-table tbody th,
+.rate-table tbody td {
+  padding-block: 1.3rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: baseline;
+  font-weight: 400;
+}
+.rate-table tbody th {
+  padding-right: 1.5rem;
+  font-family: var(--serif);
+  font-size: var(--step-h3);
+  line-height: 1.2;
+}
+.rate-table tbody td { color: var(--fg-muted); font-size: 0.85rem; }
+.rate-table .rate-cell { white-space: nowrap; }
+.rate-cell strong {
+  display: block;
+  color: var(--fg);
+  font-size: 1.2rem;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.rate-cell span {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--fg-faint);
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.rate-scope {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(2rem, 5vw, 5rem);
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+}
+.tick-list { display: grid; gap: 0.85rem; }
+.tick-list li {
+  position: relative;
+  padding-left: 1.6rem;
+  color: var(--fg-muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+/* A tick for what is covered, a dash for what is not — the shape carries the
+   meaning, so the two lists are legible without reading the headings. */
+.tick-list li::before {
+  content: "";
+  position: absolute;
+  top: 0.62em;
+  left: 0;
+  width: 0.7rem;
+  height: 0.35rem;
+  border-left: 1.5px solid var(--accent);
+  border-bottom: 1.5px solid var(--accent);
+  transform: rotate(-45deg);
+}
+.tick-list[data-tone="exclusions"] li::before {
+  top: 0.78em;
+  height: 0;
+  border-left: 0;
+  border-bottom: 1.5px solid var(--clay);
+  transform: none;
+}
+.rate-exclusion-note {
+  margin: 1.5rem 0 0;
+  padding: 1.1rem 1.3rem;
+  border-left: 2px solid var(--clay);
+  background: color-mix(in srgb, var(--clay) 7%, transparent);
+  color: var(--fg-muted);
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+
+/* --- Accommodation: about the villa ------------------------------------- */
+.villa-about-body {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: clamp(2rem, 6vw, 6rem);
+  row-gap: 1.3rem;
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+.villa-about-body p {
+  margin: 0;
+  color: var(--fg-muted);
+  font-size: 0.95rem;
+  line-height: 1.8;
+}
+.villa-about-body p:first-child {
+  grid-column: 1 / -1;
+  max-width: 52rem;
+  color: var(--fg);
+  font-family: var(--serif);
+  font-size: clamp(1.35rem, 2.4vw, 1.95rem);
+  font-weight: 300;
+  line-height: 1.35;
+}
+
+/* --- Accommodation: the three bedrooms ---------------------------------- */
+.bedroom-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+.bedroom-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--bone);
+  transition: border-color 0.45s var(--ease), transform 0.45s var(--ease);
+}
+.bedroom-card:hover { border-color: color-mix(in srgb, var(--ink) 34%, transparent); transform: translateY(-3px); }
+.bedroom-card figure { overflow: hidden; aspect-ratio: 4 / 3; }
+.bedroom-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease);
+}
+.bedroom-card:hover img { transform: scale(1.04); }
+.bedroom-body { display: flex; flex-direction: column; flex: 1; padding: 1.6rem 1.5rem 1.7rem; }
+.bedroom-index {
+  margin: 0;
+  color: var(--fg-faint);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  font-variant-numeric: tabular-nums;
+}
+.bedroom-body h3 {
+  margin: 0.5rem 0 0;
+  font-family: var(--serif);
+  font-size: var(--step-h3);
+  line-height: 1.15;
+}
+.bedroom-kind {
+  margin: 0.4rem 0 0;
+  color: var(--accent);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+.bedroom-copy {
+  margin: 0.9rem 0 1.4rem;
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+.bedroom-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: auto;
+}
+.bedroom-features li {
+  padding: 0.32rem 0.7rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--fg-muted);
+  font-size: 0.68rem;
+  letter-spacing: 0.03em;
+}
+
+/* --- Accommodation: the rest of the shoot ------------------------------- */
+.villa-gallery { background: var(--bone); }
+.villa-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(0.6rem, 1.2vw, 1.1rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+.villa-grid > * {
+  overflow: hidden;
+  border-radius: 4px;
+  aspect-ratio: 4 / 3;
+  background: var(--cream-warm);
+}
+.villa-grid img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease);
+}
+.villa-grid > *:hover img { transform: scale(1.04); }
+
+/* --- Accommodation: times, cancellation, refunds ------------------------ */
+.policy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(2rem, 4vw, 3.5rem);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+}
+.policy-block { padding-top: 1.6rem; border-top: 1px solid var(--rule); }
+
+.time-list { display: grid; gap: 1.4rem; margin: 0; }
+.time-list dt {
+  color: var(--fg-faint);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.time-list dd { margin: 0.4rem 0 0; }
+.time-list strong {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 300;
+  line-height: 1;
+}
+.time-list span {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--fg-muted);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+.policy-note {
+  margin: 1.4rem 0 0;
+  color: var(--fg-faint);
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+
+.policy-list { display: grid; gap: 1.1rem; counter-reset: clause; }
+.policy-list li { display: grid; gap: 0.3rem; }
+.policy-window {
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.policy-outcome { color: var(--fg-muted); font-size: 0.84rem; line-height: 1.6; }
+
+.policy-prose { display: grid; gap: 0.95rem; }
+.policy-prose li {
+  position: relative;
+  padding-left: 1.1rem;
+  color: var(--fg-muted);
+  font-size: 0.84rem;
+  line-height: 1.65;
+}
+.policy-prose li::before {
+  content: "";
+  position: absolute;
+  top: 0.72em;
+  left: 0;
+  width: 0.45rem;
+  height: 1px;
+  background: var(--accent);
+}
+
+.policy-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+  padding-top: clamp(2rem, 4vw, 3rem);
+  border-top: 1px solid var(--rule);
+}
+.policy-cta > p {
+  max-width: 26rem;
+  margin: 0;
+  font-family: var(--serif);
+  font-size: clamp(1.3rem, 2.2vw, 1.8rem);
+  font-weight: 300;
+  line-height: 1.3;
+}
+
+/* --- Experiences --------------------------------------------------------- */
+.experience-band { padding-top: clamp(3.5rem, 7vw, 6rem) !important; background: var(--bone); }
+.experience-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+.experience-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--cream);
+  transition: border-color 0.45s var(--ease), transform 0.45s var(--ease), box-shadow 0.45s var(--ease);
+}
+.experience-card:hover {
+  border-color: color-mix(in srgb, var(--ink) 32%, transparent);
+  transform: translateY(-4px);
+  box-shadow: 0 1.4rem 2.6rem -1.8rem rgb(38 43 19 / 45%);
+}
+.experience-media { position: relative; overflow: hidden; aspect-ratio: 4 / 3; }
+.experience-media img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1.2s var(--ease);
+}
+.experience-card:hover .experience-media img { transform: scale(1.05); }
+.experience-tag {
+  position: absolute;
+  top: 0.85rem;
+  left: 0.85rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  background: rgb(20 25 8 / 78%);
+  color: var(--sand-soft);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.experience-body { display: flex; flex-direction: column; flex: 1; padding: 1.5rem 1.5rem 1.6rem; }
+.experience-body h3 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: var(--step-h3);
+  line-height: 1.15;
+}
+.experience-body p {
+  margin: 0.75rem 0 1.4rem;
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+.experience-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: auto;
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--rule);
+}
+.experience-rating > span {
+  color: var(--fg-faint);
+  font-size: 0.66rem;
+  font-weight: 600;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.experience-cta .page-hero-title,
+.faq-cta .page-hero-title { max-width: 20ch; }
+.experience-cta .rate-actions,
+.faq-cta .rate-actions { margin-top: clamp(1.8rem, 3.5vw, 2.6rem); }
+
+/* --- Know before you book ------------------------------------------------ */
+.faq-jump ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: clamp(2rem, 4vw, 3rem);
+}
+.faq-jump a {
+  display: block;
+  padding: 0.5rem 0.95rem;
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  color: var(--fg-muted);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: border-color 0.35s var(--ease), color 0.35s var(--ease);
+}
+.faq-jump a:hover { border-color: var(--accent); color: var(--fg); }
+
+.faq-band { scroll-margin-top: 6rem; background: var(--bone); }
+.faq-band[data-tone="warm"] { background: var(--cream-warm); }
+
+.faq-layout {
+  display: grid;
+  grid-template-columns: 0.8fr 1.6fr;
+  column-gap: clamp(2rem, 6vw, 6rem);
+}
+/* The group title tracks the answers it belongs to, so a long run of them
+   never leaves the reader wondering which section they are in. */
+.faq-group-title {
+  position: sticky;
+  top: 8rem;
+  align-self: start;
+  display: flex;
+  align-items: baseline;
+  gap: 0.8rem;
+  font-family: var(--serif);
+  font-size: clamp(1.8rem, 3.4vw, 2.8rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.faq-group-index {
+  color: var(--fg-faint);
+  font-family: var(--sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  font-variant-numeric: tabular-nums;
+}
+
+.faq-list { margin: 0; border-top: 1px solid var(--rule); }
+.faq-list > * { padding-block: 1.6rem; border-bottom: 1px solid var(--rule); }
+.faq-list dt {
+  font-family: var(--serif);
+  font-size: var(--step-h3);
+  font-weight: 400;
+  line-height: 1.2;
+}
+.faq-list dd {
+  max-width: 46rem;
+  margin: 0.7rem 0 0;
+  color: var(--fg-muted);
+  font-size: 0.88rem;
+  line-height: 1.75;
+}
+
 /* --------------------------------------------------------------------------
    Responsive
    -------------------------------------------------------------------------- */
@@ -1472,6 +2306,34 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
   .site-header > .container { padding-inline: 3rem; }
   .hero-inner { padding-inline: 3rem; }
   .hero-copy { width: min(42rem, 56vw); }
+
+  /* "Know Before You Book" is the link that breaks the bar first, and it is
+     the only one with a short form. The full text stays in the accessibility
+     tree rather than being removed, so the link keeps its real name. */
+  .site-nav a[data-has-short] .nav-label-full {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .site-nav a[data-has-short] .nav-label-short { display: inline; }
+}
+
+@media (max-width: 1100px) {
+  /* Below this the links collide with the booking button, so they move into
+     the panel and the bar keeps only the wordmark and the two actions. */
+  .site-nav { display: none; }
+  .nav-toggle { display: inline-flex; }
+  .site-header > .container { grid-template-columns: auto 1fr; }
+  .header-actions { justify-self: end; }
+
+  .bedroom-list,
+  .experience-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .policy-grid { grid-template-columns: 1fr; }
+  .policy-block:first-child { padding-top: 0; border-top: 0; }
 }
 
 @media (max-width: 1080px) {
@@ -1479,8 +2341,6 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
 }
 
 @media (max-width: 900px) {
-  .site-header > .container { grid-template-columns: auto 1fr; }
-  .header-actions { justify-self: end; }
 
   .section-header[data-layout="split"] { grid-template-columns: 1fr; }
   .section-header[data-layout="split"] .section-lede { margin: 1.4rem 0 0; }
@@ -1494,6 +2354,21 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
 
   .amenities-list { grid-template-columns: 1fr; }
   .footer-details { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .page-hero-facts ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .villa-triptych { grid-template-columns: 1fr; }
+  .villa-triptych-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: none;
+  }
+  .villa-triptych-stack figure { aspect-ratio: 3 / 2; }
+  .rate-lead { grid-template-columns: 1fr; align-items: start; }
+  .rate-scope { grid-template-columns: 1fr; }
+  .villa-about-body { grid-template-columns: 1fr; }
+  .villa-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  .faq-layout { grid-template-columns: 1fr; row-gap: 1.6rem; }
+  .faq-group-title { position: static; }
 }
 
 @media (max-width: 759px) {
@@ -1508,6 +2383,19 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
     min-height: 3rem;
     padding-inline: 0.75rem;
     font-size: 0.78rem;
+  }
+  .nav-toggle { width: 2.5rem; height: 2.5rem; }
+  .site-menu a { font-size: 1.35rem; }
+
+  .page-hero { padding-block: calc(5.5rem + 2.75rem) 3rem !important; }
+  /* Stacked in one column, the frames have no lead to take their height from. */
+  .villa-triptych-stack { grid-template-columns: 1fr; grid-template-rows: none; }
+  .villa-triptych-stack figure { aspect-ratio: 3 / 2; }
+  .rate-actions a[data-variant="primary"],
+  .rate-actions a[data-variant="outline"] {
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 3.4rem;
   }
 
   .hero {
@@ -1610,6 +2498,34 @@ a:hover > span[aria-hidden], a:hover .platform-arrow { transform: translate(0.22
 
 @media (max-width: 700px) {
   .premise-ledger { grid-template-columns: repeat(4, 1fr); }
+
+  .bedroom-list,
+  .experience-grid,
+  .villa-grid { grid-template-columns: 1fr; }
+
+  /* Three columns will not fit, and a scrolling table hides the price — so
+     each rate becomes its own block with the amount on its own line. */
+  .rate-table,
+  .rate-table tbody,
+  .rate-table tr,
+  .rate-table tbody th,
+  .rate-table tbody td { display: block; }
+  .rate-table thead { display: none; }
+  .rate-table tbody tr { padding-block: 1.3rem; border-bottom: 1px solid var(--rule); }
+  .rate-table tbody th,
+  .rate-table tbody td { padding-block: 0; border-bottom: 0; }
+  .rate-table tbody td { margin-top: 0.35rem; }
+  .rate-table .rate-cell,
+  .rate-table thead th:last-child { text-align: left; }
+  .rate-cell {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    margin-top: 0.6rem !important;
+  }
+  .rate-cell span { margin-top: 0; }
+
+  .policy-cta { flex-direction: column; align-items: flex-start; }
 
   .rooms-list button { grid-template-columns: auto 1fr; row-gap: 0.2rem; }
   .room-kind { grid-column: 2; }

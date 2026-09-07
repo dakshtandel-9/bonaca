@@ -3,18 +3,19 @@ import Image from "next/image";
 import Container from "@/components/layout/Container";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Monogram from "@/components/ui/Monogram";
-import { socialLinks } from "@/data/navigation";
-import { IMAGES } from "@/lib/constants";
-import { isPlaceholderLink, siteConfig } from "@/lib/site-config";
+import { isPlaceholderLink, telHref } from "@/lib/cms/derive";
+import type { SiteContent } from "@/lib/cms/types";
 
-export default function Footer() {
+export default function Footer({ content }: { content: SiteContent }) {
+  const { site, footer, navigation } = content;
   const currentYear = new Date().getFullYear();
+
   const mapQuery = encodeURIComponent(
-    [siteConfig.name, siteConfig.place.locality, siteConfig.place.region].join(", "),
+    [site.name, site.place.locality, site.place.region].filter(Boolean).join(", "),
   );
-  const mapUrl = isPlaceholderLink(siteConfig.links.googleMaps)
+  const mapUrl = isPlaceholderLink(site.links.googleMaps)
     ? `https://www.google.com/maps/search/?api=1&query=${mapQuery}`
-    : siteConfig.links.googleMaps;
+    : site.links.googleMaps;
   const mapEmbedUrl = `https://www.google.com/maps?q=${mapQuery}&output=embed`;
 
   return (
@@ -25,32 +26,30 @@ export default function Footer() {
         <div className="footer-top">
           <div className="footer-brand">
             <Image
-              src={IMAGES.logoLight}
-              alt={siteConfig.name}
+              src={site.branding.logoLight}
+              alt={site.name}
               width={468}
               height={118}
               className="footer-logo"
             />
-            <p className="footer-tagline">{siteConfig.tagline}</p>
+            <p className="footer-tagline">{site.tagline}</p>
           </div>
 
           <div className="footer-details">
             <div className="footer-contact">
-              <h2>Contact</h2>
+              <h2>{footer.contactTitle}</h2>
               <ul>
                 <li>
-                  <a href={`tel:${siteConfig.contact.phone.replace(/\s/g, "")}`}>
-                    {siteConfig.contact.phone}
-                  </a>
+                  <a href={telHref(site.contact.phone)}>{site.contact.phone}</a>
                 </li>
                 <li>
-                  <a href={`mailto:${siteConfig.contact.email}`}>{siteConfig.contact.email}</a>
+                  <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
                 </li>
-                <li>{siteConfig.place.locality}</li>
+                <li>{site.place.locality}</li>
               </ul>
 
               <ul className="footer-socials">
-                {socialLinks.map((link) => (
+                {navigation.social.map((link) => (
                   <li key={link.id}>
                     <ExternalLink href={link.url}>{link.label}</ExternalLink>
                   </li>
@@ -58,30 +57,32 @@ export default function Footer() {
               </ul>
             </div>
 
-            <div className="footer-map">
-              <iframe
-                src={mapEmbedUrl}
-                title={`Google map showing ${siteConfig.name}`}
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                allowFullScreen
-              />
-              <ExternalLink href={mapUrl} data-variant="map">
-                Open in Google Maps <span aria-hidden="true">↗</span>
-              </ExternalLink>
-            </div>
+            {footer.showMap ? (
+              <div className="footer-map">
+                <iframe
+                  src={mapEmbedUrl}
+                  title={`Google map showing ${site.name}`}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+                <ExternalLink href={mapUrl} data-variant="map">
+                  {footer.mapLinkLabel} <span aria-hidden="true">↗</span>
+                </ExternalLink>
+              </div>
+            ) : null}
           </div>
         </div>
 
         <div className="footer-bottom">
           <p>
-            <Monogram size={0.9} /> &copy; {currentYear} {siteConfig.name}. All rights reserved.
+            <Monogram size={0.9} /> &copy; {currentYear} {site.name}. {footer.copyright}
           </p>
         </div>
       </Container>
 
       <p className="footer-watermark" aria-hidden="true">
-        bonaca
+        {footer.watermark}
       </p>
     </footer>
   );

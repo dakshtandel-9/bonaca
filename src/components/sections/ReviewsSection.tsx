@@ -1,7 +1,8 @@
 import Container from "@/components/layout/Container";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { reviews, type Review } from "@/data/reviews";
+import StarRating from "@/components/ui/StarRating";
+import type { ReviewItem, SiteContent } from "@/lib/cms/types";
 import { SECTION_IDS } from "@/lib/constants";
 
 const COLUMNS = 3;
@@ -16,12 +17,14 @@ const COLUMN_SPEEDS = [72, 58, 66];
  * Renders nothing when `reviews` is empty, so the section disappears cleanly
  * rather than showing an empty frame.
  */
-export default function ReviewsSection() {
+export default function ReviewsSection({ content }: { content: SiteContent }) {
+  const section = content.home.reviews;
+  const reviews = section.items;
   if (reviews.length === 0) return null;
 
   /* Dealt round-robin rather than sliced, so short lists thin every column
      evenly instead of leaving the last one empty. */
-  const columns: Review[][] = Array.from({ length: COLUMNS }, (_, column) =>
+  const columns: ReviewItem[][] = Array.from({ length: COLUMNS }, (_, column) =>
     reviews.filter((_, i) => i % COLUMNS === column),
   ).filter((column) => column.length > 0);
 
@@ -29,11 +32,11 @@ export default function ReviewsSection() {
     <section id={SECTION_IDS.reviews} className="reviews" aria-labelledby="reviews-title">
       <Container>
         <SectionHeader
-          index="08"
-          eyebrow="Guests"
+          index={section.index}
+          eyebrow={section.eyebrow}
           headingId="reviews-title"
-          title="In their words."
-          description="Every quote below is left exactly as the guest wrote it, on the platform they booked through."
+          title={section.title}
+          description={section.description}
           layout="split"
         />
 
@@ -66,23 +69,11 @@ export default function ReviewsSection() {
   );
 }
 
-function ReviewCard({ review }: { review: Review }) {
+function ReviewCard({ review }: { review: ReviewItem }) {
   return (
     <li className="wall-card">
       <figure>
-        <div className="review-rating" aria-label={`${review.rating} out of 5`}>
-          {Array.from({ length: review.rating }).map((_, i) => (
-            <svg
-              className="review-star"
-              key={i}
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              focusable="false"
-            >
-              <path d="m12 2.75 2.83 5.73 6.32.92-4.58 4.46 1.08 6.3L12 17.19l-5.65 2.97 1.08-6.3L2.85 9.4l6.32-.92L12 2.75Z" />
-            </svg>
-          ))}
-        </div>
+        <StarRating rating={review.rating} className="review-rating" />
 
         <blockquote>
           <p>{review.quote}</p>

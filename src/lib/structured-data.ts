@@ -1,51 +1,49 @@
-import { amenities } from "@/data/amenities";
-import { propertyStats } from "@/data/property";
 import {
-  absoluteUrl,
   isPlaceholderEmail,
+  isPlaceholderLink,
   isPlaceholderLocation,
   isPlaceholderPhone,
-  seoImagePaths,
-} from "@/lib/seo";
-import { isPlaceholderLink, siteConfig } from "@/lib/site-config";
+} from "@/lib/cms/derive";
+import type { SiteContent } from "@/lib/cms/types";
+import { absoluteUrl, seoImagePaths, siteUrl } from "@/lib/seo";
 
 /**
  * Schema.org markup so search engines can read Bonaca as a lodging business
- * rather than a generic page. Everything is derived from siteConfig and the
- * data files, so it stays correct as the placeholders are filled in — and
- * placeholder values are omitted rather than published as facts.
- *
- * Only what the page actually shows is published here: the FAQPage block went
- * when the questions came off the page, since schema for absent content is a
- * structured-data violation rather than a free win.
+ * rather than a generic page. Everything is derived from the CRM content, so
+ * it stays correct as the placeholders are filled in — and placeholder values
+ * are omitted rather than published as facts.
  */
-export function buildStructuredData() {
+export function buildStructuredData(content: SiteContent) {
+  const { site } = content;
+
   const sameAs = [
-    siteConfig.social.instagram,
-    siteConfig.social.facebook,
-    siteConfig.links.airbnb,
-    siteConfig.links.booking,
-    siteConfig.links.agoda,
+    site.social.instagram,
+    site.social.facebook,
+    site.links.airbnb,
+    site.links.booking,
+    site.links.agoda,
   ].filter((url) => !isPlaceholderLink(url));
 
-  const lodgingId = `${siteConfig.url}/#lodging`;
-  const websiteId = `${siteConfig.url}/#website`;
-  const bedroomCount = propertyStats.find((stat) => stat.id === "bedrooms")?.value;
-  const guestCount = propertyStats.find((stat) => stat.id === "guests")?.value;
+  const lodgingId = `${siteUrl}/#lodging`;
+  const websiteId = `${siteUrl}/#website`;
+
+  const stats = content.home.overview.stats;
+  const bedroomCount = stats.find((stat) => stat.id === "bedrooms")?.value;
+  const guestCount = stats.find((stat) => stat.id === "guests")?.value;
 
   const lodging: Record<string, unknown> = {
     "@type": "LodgingBusiness",
     "@id": lodgingId,
-    name: siteConfig.name,
-    description: siteConfig.description,
-    url: siteConfig.url,
+    name: site.name,
+    description: site.description,
+    url: siteUrl,
     mainEntityOfPage: { "@id": websiteId },
-    image: seoImagePaths.map(absoluteUrl),
-    logo: absoluteUrl("/images/bonaca/branding/logo-dark-trim.png"),
+    image: seoImagePaths(content).map(absoluteUrl),
+    logo: absoluteUrl(site.branding.logoDark),
     numberOfRooms: bedroomCount,
     containsPlace: {
       "@type": "Accommodation",
-      name: `${siteConfig.name} private villa`,
+      name: `${site.name} private villa`,
       accommodationCategory: "Villa",
       numberOfBedrooms: bedroomCount,
       occupancy: {
@@ -53,7 +51,7 @@ export function buildStructuredData() {
         value: guestCount,
       },
     },
-    amenityFeature: amenities.map((amenity) => ({
+    amenityFeature: content.amenities.items.map((amenity) => ({
       "@type": "LocationFeatureSpecification",
       name: amenity.name,
       value: true,
@@ -61,25 +59,21 @@ export function buildStructuredData() {
   };
 
   if (sameAs.length > 0) lodging.sameAs = sameAs;
-  if (!isPlaceholderPhone(siteConfig.contact.phone)) {
-    lodging.telephone = siteConfig.contact.phone;
-  }
-  if (!isPlaceholderEmail(siteConfig.contact.email)) lodging.email = siteConfig.contact.email;
-  if (!isPlaceholderLocation(siteConfig.place.locality)) {
+  if (!isPlaceholderPhone(site.contact.phone)) lodging.telephone = site.contact.phone;
+  if (!isPlaceholderEmail(site.contact.email)) lodging.email = site.contact.email;
+  if (!isPlaceholderLocation(site.place.locality)) {
     lodging.address = {
       "@type": "PostalAddress",
-      addressLocality: siteConfig.place.locality,
-      addressRegion: siteConfig.place.region,
-      addressCountry: siteConfig.place.countryCode,
+      addressLocality: site.place.locality,
+      addressRegion: site.place.region,
+      addressCountry: site.place.countryCode,
     };
   }
-  if (!isPlaceholderLink(siteConfig.links.googleMaps)) {
-    lodging.hasMap = siteConfig.links.googleMaps;
-  }
-  if (!isPlaceholderLink(siteConfig.links.airbnb)) {
+  if (!isPlaceholderLink(site.links.googleMaps)) lodging.hasMap = site.links.googleMaps;
+  if (!isPlaceholderLink(site.links.airbnb)) {
     lodging.potentialAction = {
       "@type": "ReserveAction",
-      target: siteConfig.links.airbnb,
+      target: site.links.airbnb,
     };
   }
 
@@ -89,10 +83,10 @@ export function buildStructuredData() {
       {
         "@type": "WebSite",
         "@id": websiteId,
-        url: siteConfig.url,
-        name: siteConfig.name,
-        description: siteConfig.description,
-        inLanguage: siteConfig.language,
+        url: siteUrl,
+        name: site.name,
+        description: site.description,
+        inLanguage: site.language,
         publisher: { "@id": lodgingId },
       },
       lodging,

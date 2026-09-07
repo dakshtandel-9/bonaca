@@ -16,6 +16,19 @@ export const SECTION_IDS = {
 
 export type SectionId = (typeof SECTION_IDS)[keyof typeof SECTION_IDS];
 
+/**
+ * Every page on the site. The header, footer and sitemap all read from here,
+ * so adding a route is a single edit rather than three that can drift apart.
+ */
+export const ROUTES = {
+  home: "/",
+  accommodation: "/accommodation",
+  experiences: "/experiences",
+  knowBeforeYouBook: "/know-before-you-book",
+} as const;
+
+export type Route = (typeof ROUTES)[keyof typeof ROUTES];
+
 /** Every photograph used on the site, resolved from one place. */
 export const IMAGES = {
   /** Blue-hour approach shot, cropped two ways and art-directed in the hero. */
@@ -45,6 +58,21 @@ export const IMAGES = {
   galleryPoolWalk: "/images/bonaca/gallery/pool-walk.jpg",
   galleryLawn: "/images/bonaca/gallery/lawn-elevation.jpg",
   galleryLanterns: "/images/bonaca/gallery/courtyard-lanterns.jpg",
+  /**
+   * The four frames the homepage never reaches, used by the accommodation and
+   * experience pages.
+   *
+   * ⚠️ Several files under public/images/bonaca are byte-identical to each
+   * other under different names — dining.jpg, living-room.jpg, story-main.jpg
+   * and experience/interior-main.jpg are one photograph; garden.jpg,
+   * exterior-02.jpg and experience/outdoor-main.jpg are another; exterior-01
+   * and hero/hero-main.jpg are a third. Only one name per photograph is listed
+   * here, so nothing on a page can end up showing the same frame twice.
+   */
+  galleryCourtyardSunset: "/images/bonaca/gallery/exterior-01.jpg",
+  galleryLivingDay: "/images/bonaca/gallery/living-room.jpg",
+  galleryBedroomDay: "/images/bonaca/gallery/bedroom.jpg",
+  galleryFieldsMorning: "/images/bonaca/experience/outdoor-main.jpg",
   /** Trimmed to the wordmark's bounding box (468×118) so it scales predictably. */
   logoDark: "/images/bonaca/branding/logo-dark-trim.png",
   logoLight: "/images/bonaca/branding/logo-light-trim.png",

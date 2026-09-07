@@ -4,6 +4,7 @@ import Link from "next/link";
 import Container from "@/components/layout/Container";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+import { getSiteContent } from "@/lib/cms/content";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -13,10 +14,12 @@ export const metadata: Metadata = {
   },
 };
 
-export default function NotFound() {
+export default async function NotFound() {
+  const content = await getSiteContent();
+
   return (
     <>
-      <Header />
+      <Header content={content} />
       <main id="main-content">
         <section aria-labelledby="not-found-title">
           <Container>
@@ -26,7 +29,7 @@ export default function NotFound() {
           </Container>
         </section>
       </main>
-      <Footer />
+      <Footer content={content} />
     </>
   );
 }

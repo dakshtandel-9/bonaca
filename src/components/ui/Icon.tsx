@@ -60,7 +60,14 @@ const PATHS: Record<AmenityIconKey, React.ReactNode> = {
   ),
 };
 
-export default function Icon({ name }: { name: AmenityIconKey }) {
+/**
+ * `name` is a plain string because it arrives from the CRM, where an icon can
+ * be picked for an amenity that was added after this set was drawn. Anything
+ * unrecognised falls back to the house rather than rendering an empty square.
+ */
+export default function Icon({ name }: { name: string }) {
+  const paths = PATHS[name as AmenityIconKey] ?? PATHS.home;
+
   return (
     <svg
       viewBox="0 0 24 24"
@@ -72,7 +79,7 @@ export default function Icon({ name }: { name: AmenityIconKey }) {
       aria-hidden="true"
       focusable="false"
     >
-      {PATHS[name]}
+      {paths}
     </svg>
   );
 }

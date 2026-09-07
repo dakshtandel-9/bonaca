@@ -3,7 +3,7 @@
 import Container from "@/components/layout/Container";
 import AccordionGallery from "@/components/ui/AccordionGallery";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { showcaseFrames } from "@/data/showcase";
+import type { SiteContent } from "@/lib/cms/types";
 import { SECTION_IDS } from "@/lib/constants";
 
 /**
@@ -12,24 +12,27 @@ import { SECTION_IDS } from "@/lib/constants";
  * colour. Deliberately placed after the gallery, where a visitor has already
  * seen everything and is browsing rather than surveying.
  */
-export default function ShowcaseSection() {
+export default function ShowcaseSection({ content }: { content: SiteContent }) {
+  const section = content.home.showcase;
+  if (section.frames.length === 0) return null;
+
   return (
     <section id={SECTION_IDS.showcase} className="showcase" aria-labelledby="showcase-title">
       <Container>
         <SectionHeader
-          index="05"
-          eyebrow="In detail"
+          index={section.index}
+          eyebrow={section.eyebrow}
           headingId="showcase-title"
-          title="One frame at a time."
-          description="The same house, taken slowly. Hover a panel to open it."
+          title={section.title}
+          description={section.description}
           layout="split"
         />
 
         <div className="showcase-stage">
           <AccordionGallery
-            items={showcaseFrames}
-            label="Bonaca in eight frames"
-            defaultIndex={2}
+            items={section.frames}
+            label={`${content.site.name} in ${section.frames.length} frames`}
+            defaultIndex={Math.min(2, section.frames.length - 1)}
             height={540}
             gap={12}
             radius={4}

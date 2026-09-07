@@ -6,7 +6,8 @@ import { useCallback, useEffect, useState } from "react";
 import Container from "@/components/layout/Container";
 import Masonry from "@/components/ui/Masonry";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { galleryCategories, galleryItems } from "@/data/gallery";
+import { galleryCategories } from "@/lib/cms/derive";
+import type { SiteContent } from "@/lib/cms/types";
 import { SECTION_IDS } from "@/lib/constants";
 
 /** Four across on a desktop, stepping down to a single column on a phone. */
@@ -22,7 +23,11 @@ const GALLERY_COLUMNS = [
  * always steps through what the visitor can actually see — and the grid
  * re-flows to the remaining photographs rather than re-rendering.
  */
-export default function GallerySection() {
+export default function GallerySection({ content }: { content: SiteContent }) {
+  const section = content.home.gallery;
+  const galleryItems = section.items;
+  const categories = galleryCategories(content);
+
   const [filter, setFilter] = useState<string>("all");
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
@@ -65,17 +70,17 @@ export default function GallerySection() {
 
       <Container>
         <SectionHeader
-          index="04"
-          eyebrow="Gallery"
+          index={section.index}
+          eyebrow={section.eyebrow}
           headingId="gallery-title"
-          title="Spaces that photograph honestly."
-          description="Every picture here is the house as it stands. Nothing staged elsewhere, nothing borrowed."
+          title={section.title}
+          description={section.description}
           layout="split"
         />
 
-        {galleryCategories.length > 2 && (
+        {categories.length > 2 && (
           <div className="gallery-filters" role="group" aria-label="Filter the gallery">
-            {galleryCategories.map((category) => (
+            {categories.map((category) => (
               <button
                 key={category}
                 type="button"
@@ -104,7 +109,7 @@ export default function GallerySection() {
             <button type="button" onClick={() => setOpenIndex(i)}>
               <figure>
                 <Image
-                  src={item.src as string}
+                  src={item.src}
                   alt={item.alt}
                   fill
                   sizes="(max-width: 520px) 92vw, (max-width: 760px) 46vw, (max-width: 1100px) 31vw, 23vw"
@@ -127,7 +132,7 @@ export default function GallerySection() {
 
           <figure>
             <Image
-              src={current.src as string}
+              src={current.src}
               alt={current.alt}
               width={current.width}
               height={current.height}

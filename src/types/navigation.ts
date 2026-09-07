@@ -5,6 +5,8 @@ export interface NavigationItem {
   label: string;
   /** In-page anchor (e.g. "#gallery") or route path. */
   href: string;
+  /** Shorter text for tight layouts. Falls back to `label` when absent. */
+  shortLabel?: string;
 }
 
 /** A titled group of links rendered inside the footer. */

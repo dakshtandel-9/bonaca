@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 
-import { absoluteUrl, isSiteLaunchReady } from "@/lib/seo";
-import { siteConfig } from "@/lib/site-config";
-import { buildStructuredData } from "@/lib/structured-data";
+import { getSiteContent } from "@/lib/cms/content";
+import { isIndexable } from "@/lib/cms/derive";
+import { absoluteUrl } from "@/lib/seo";
 
 import "./globals.css";
 
@@ -19,60 +19,65 @@ const sans = Manrope({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(siteConfig.url),
-  title: {
-    default: siteConfig.title,
-    template: `%s — ${siteConfig.name}`,
-  },
-  description: siteConfig.description,
-  applicationName: siteConfig.name,
-  category: "travel",
-  referrer: "origin-when-cross-origin",
-  alternates: {
-    canonical: "/",
-  },
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
-  manifest: "/manifest.webmanifest",
-  robots: {
-    index: isSiteLaunchReady,
-    follow: true,
-    googleBot: {
-      index: isSiteLaunchReady,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
+/**
+ * The shell only. Everything the public site wears — header, footer, loader,
+ * structured data — moved into `(site)/layout.tsx` when the CRM arrived, so
+ * /admin renders on a bare page rather than inside the villa's chrome.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const { site } = await getSiteContent();
+  const content = await getSiteContent();
+  const indexable = isIndexable(content);
+
+  return {
+    metadataBase: new URL(absoluteUrl("/")),
+    title: {
+      default: site.title,
+      template: `%s — ${site.name}`,
     },
-  },
-  openGraph: {
-    type: "website",
-    siteName: siteConfig.name,
-    title: siteConfig.title,
-    description: siteConfig.description,
-    url: siteConfig.url,
-    locale: siteConfig.locale,
-    images: [
-      {
-        url: absoluteUrl("/social/og-image.png"),
-        width: 1200,
-        height: 630,
-        type: "image/png",
-        alt: `${siteConfig.name} — private retreat`,
+    description: site.description,
+    applicationName: site.name,
+    category: "travel",
+    referrer: "origin-when-cross-origin",
+    alternates: { canonical: "/" },
+    formatDetection: { email: false, address: false, telephone: false },
+    manifest: "/manifest.webmanifest",
+    robots: {
+      index: indexable,
+      follow: true,
+      googleBot: {
+        index: indexable,
+        follow: true,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+        "max-video-preview": -1,
       },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: siteConfig.title,
-    description: siteConfig.description,
-    images: [absoluteUrl("/social/og-image.png")],
-  },
-};
+    },
+    openGraph: {
+      type: "website",
+      siteName: site.name,
+      title: site.title,
+      description: site.description,
+      url: absoluteUrl("/"),
+      locale: site.locale,
+      images: [
+        {
+          url: absoluteUrl(site.branding.ogImage),
+          width: 1200,
+          height: 630,
+          type: "image/png",
+          alt: `${site.name} — private retreat`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: site.title,
+      description: site.description,
+      images: [absoluteUrl(site.branding.ogImage)],
+    },
+  };
+}
 
 /** themeColor belongs to the viewport export in Next 16, not to metadata. */
 export const viewport: Viewport = {
@@ -82,21 +87,12 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const { site } = await getSiteContent();
+
   return (
-    <html lang={siteConfig.language} className={`${serif.variable} ${sans.variable}`}>
-      <body>
-        <a className="skip-link" href="#main-content">
-          Skip to main content
-        </a>
-        {children}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(buildStructuredData()).replace(/</g, "\\u003c"),
-          }}
-        />
-      </body>
+    <html lang={site.language} className={`${serif.variable} ${sans.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

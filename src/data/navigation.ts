@@ -1,4 +1,4 @@
-import { SECTION_IDS } from "@/lib/constants";
+import { ROUTES, SECTION_IDS } from "@/lib/constants";
 import { siteConfig } from "@/lib/site-config";
 import type {
   FooterLinkGroup,
@@ -6,30 +6,44 @@ import type {
   SocialLink,
 } from "@/types/navigation";
 
-/** Header navigation. Anchors scroll to the matching homepage section. */
+/** Header navigation — one entry per page, in the order the bar renders them. */
 export const mainNavigation: NavigationItem[] = [
-  { id: "stay", label: "Stay", href: `#${SECTION_IDS.stay}` },
-  { id: "gallery", label: "Gallery", href: `#${SECTION_IDS.gallery}` },
-  { id: "amenities", label: "Amenities", href: `#${SECTION_IDS.amenities}` },
+  { id: "home", label: "Home", href: ROUTES.home },
+  { id: "accommodation", label: "Accommodation", href: ROUTES.accommodation },
+  { id: "experiences", label: "Experiences", href: ROUTES.experiences },
+  {
+    id: "know-before-you-book",
+    label: "Know Before You Book",
+    href: ROUTES.knowBeforeYouBook,
+    /** Two words on a phone, so the bar does not wrap into three lines. */
+    shortLabel: "Know Before",
+  },
 ];
 
 export const footerLinkGroups: FooterLinkGroup[] = [
   {
+    id: "pages",
+    title: "Pages",
+    items: mainNavigation.map(({ id, label, href }) => ({ id, label, href })),
+  },
+  {
     id: "explore",
     title: "Explore",
     items: [
-      { id: "story", label: "The House", href: `#${SECTION_IDS.story}` },
-      { id: "rooms", label: "Spaces", href: `#${SECTION_IDS.rooms}` },
-      { id: "gallery", label: "Gallery", href: `#${SECTION_IDS.gallery}` },
-      { id: "moments", label: "A Day Here", href: `#${SECTION_IDS.moments}` },
+      { id: "story", label: "The House", href: `${ROUTES.home}#${SECTION_IDS.story}` },
+      { id: "rooms", label: "Spaces", href: `${ROUTES.home}#${SECTION_IDS.rooms}` },
+      { id: "gallery", label: "Gallery", href: `${ROUTES.home}#${SECTION_IDS.gallery}` },
+      { id: "moments", label: "A Day Here", href: `${ROUTES.home}#${SECTION_IDS.moments}` },
     ],
   },
   {
     id: "guest-information",
     title: "Guests",
     items: [
-      { id: "amenities", label: "Amenities", href: `#${SECTION_IDS.amenities}` },
-      { id: "reviews", label: "Reviews", href: `#${SECTION_IDS.reviews}` },
+      { id: "rates", label: "Rates", href: `${ROUTES.accommodation}#rates` },
+      { id: "amenities", label: "Amenities", href: `${ROUTES.accommodation}#amenities` },
+      { id: "policies", label: "Policies", href: `${ROUTES.accommodation}#policies` },
+      { id: "faqs", label: "FAQs", href: ROUTES.knowBeforeYouBook },
     ],
   },
 ];

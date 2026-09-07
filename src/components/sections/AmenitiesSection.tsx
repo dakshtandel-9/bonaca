@@ -2,25 +2,29 @@ import Container from "@/components/layout/Container";
 import Icon from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { amenities } from "@/data/amenities";
+import type { SiteContent } from "@/lib/cms/types";
 import { SECTION_IDS } from "@/lib/constants";
 
 /**
  * Dark band. A hairline register rather than a grid of boxes: each row is a
  * rule that lights up on hover, with the icon sitting in the left margin.
  */
-export default function AmenitiesSection() {
+export default function AmenitiesSection({ content }: { content: SiteContent }) {
+  const section = content.home.amenities;
+  const amenities = content.amenities.items;
+  if (amenities.length === 0) return null;
+
   return (
     <section id={SECTION_IDS.amenities} className="amenities band-dark" aria-labelledby="amenities-title">
       <span className="grain" aria-hidden="true" />
 
       <Container>
         <SectionHeader
-          index="07"
-          eyebrow="Amenities"
+          index={section.index}
+          eyebrow={section.eyebrow}
           headingId="amenities-title"
-          title="Everything, quietly handled."
-          description="The list is short because everything on it actually works."
+          title={section.title}
+          description={section.description}
           layout="split"
         />
 

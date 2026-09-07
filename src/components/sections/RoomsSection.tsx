@@ -5,7 +5,7 @@ import { useState } from "react";
 
 import Container from "@/components/layout/Container";
 import SectionHeader from "@/components/ui/SectionHeader";
-import { rooms } from "@/data/rooms";
+import type { SiteContent } from "@/lib/cms/types";
 import { SECTION_IDS } from "@/lib/constants";
 
 /**
@@ -16,23 +16,27 @@ import { SECTION_IDS } from "@/lib/constants";
  * On narrow screens the same markup becomes a snap-scrolling row of cards, so
  * there is no second layout to keep in sync.
  */
-export default function RoomsSection() {
-  const [activeId, setActiveId] = useState(rooms[0].id);
+export default function RoomsSection({ content }: { content: SiteContent }) {
+  const section = content.home.rooms;
+  const rooms = section.items;
+  const [activeId, setActiveId] = useState(rooms[0]?.id ?? "");
+
+  if (rooms.length === 0) return null;
 
   return (
     <section id={SECTION_IDS.rooms} className="rooms" aria-labelledby="rooms-title">
       <Container>
         <SectionHeader
-          index="03"
-          eyebrow="Spaces"
+          index={section.index}
+          eyebrow={section.eyebrow}
           headingId="rooms-title"
-          title="Four rooms to lose an afternoon in."
-          description="Move through the house before you arrive."
+          title={section.title}
+          description={section.description}
           layout="split"
         />
 
         <div className="rooms-body">
-          <ul className="rooms-list" role="tablist" aria-label="Spaces at Bonaca">
+          <ul className="rooms-list" role="tablist" aria-label={`Spaces at ${content.site.name}`}>
             {rooms.map((room) => {
               const selected = room.id === activeId;
               return (
@@ -71,7 +75,7 @@ export default function RoomsSection() {
                 >
                   <Image
                     src={room.image}
-                    alt={`${room.name} at Bonaca`}
+                    alt={`${room.name} at ${content.site.name}`}
                     width={1536}
                     height={1024}
                     sizes="(max-width: 900px) 100vw, 58vw"

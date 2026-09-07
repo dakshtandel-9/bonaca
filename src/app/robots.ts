@@ -1,17 +1,17 @@
 import type { MetadataRoute } from "next";
 
-import { isSiteLaunchReady } from "@/lib/seo";
-import { siteConfig } from "@/lib/site-config";
+import { getSiteContent } from "@/lib/cms/content";
+import { isIndexable } from "@/lib/cms/derive";
+import { siteUrl } from "@/lib/seo";
 
-export const dynamic = "force-static";
+export default async function robots(): Promise<MetadataRoute.Robots> {
+  const content = await getSiteContent();
 
-export default function robots(): MetadataRoute.Robots {
   return {
-    rules: {
-      userAgent: "*",
-      allow: "/",
-    },
-    ...(isSiteLaunchReady ? { sitemap: `${siteConfig.url}/sitemap.xml` } : {}),
-    host: siteConfig.url,
+    rules: [
+      { userAgent: "*", allow: "/", disallow: ["/admin", "/api/"] },
+    ],
+    ...(isIndexable(content) ? { sitemap: `${siteUrl}/sitemap.xml` } : {}),
+    host: siteUrl,
   };
 }
