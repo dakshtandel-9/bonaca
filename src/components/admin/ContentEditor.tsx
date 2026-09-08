@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import FieldControl from "@/components/admin/FieldControl";
+import PromptPanel from "@/components/admin/PromptPanel";
 import { getAtPath, setAtPath } from "@/lib/cms/path";
 import type { PageSchema } from "@/lib/cms/schema";
 import type { SiteContent } from "@/lib/cms/types";
@@ -131,6 +132,8 @@ export default function ContentEditor({
           </a>
         ) : null}
       </div>
+
+      <PromptPanel scope={page.id} label={page.label} />
 
       {page.sections.map((section) => (
         <section className="admin-card" key={section.id} id={`section-${section.id}`}>

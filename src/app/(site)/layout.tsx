@@ -1,7 +1,9 @@
+import ComingSoon from "@/components/layout/ComingSoon";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import PageLoader from "@/components/ui/PageLoader";
 import { getSiteContent } from "@/lib/cms/content";
+import { isComingSoon } from "@/lib/cms/derive";
 import { buildStructuredData } from "@/lib/structured-data";
 
 /**
@@ -10,6 +12,13 @@ import { buildStructuredData } from "@/lib/structured-data";
  */
 export default async function SiteLayout({ children }: LayoutProps<"/">) {
   const content = await getSiteContent();
+
+  /* The holding page replaces the site rather than sitting in front of it, so
+     none of the villa's chrome renders and none of the real copy is in the
+     markup for anyone to read. It is deliberately decided from content alone —
+     reading the admin cookie here would make all four pages dynamic for every
+     visitor, for a preview only one person ever needs. */
+  if (isComingSoon(content)) return <ComingSoon content={content} />;
 
   return (
     <>

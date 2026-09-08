@@ -657,3 +657,147 @@
   .admin-shell { grid-template-columns: minmax(0, 1fr); }
   .admin-sidebar { position: static; height: auto; }
 }
+
+/* ------------------------------------------------------------- ai import */
+
+.admin-prompt {
+  border: 1px solid var(--admin-line);
+  border-radius: 9px;
+  background: #fcfcf9;
+  padding: 0.75rem;
+  margin-top: 0.9rem;
+}
+
+.admin-prompt-head { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
+.admin-prompt-body { margin-top: 0.75rem; display: grid; gap: 0.65rem; }
+
+.admin-prompt-text {
+  font-family: var(--mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+.admin-steps {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.28rem;
+  font-size: 0.8rem;
+  color: var(--admin-muted);
+}
+
+.admin-drop {
+  border: 1px dashed var(--admin-line-strong);
+  border-radius: 9px;
+  background: #fcfcf9;
+  padding: 1.15rem 0.9rem;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--admin-muted);
+  transition: background 0.14s ease, border-color 0.14s ease;
+  margin-bottom: 0.9rem;
+}
+
+.admin-drop[data-dragging] { border-color: var(--admin-accent); background: var(--admin-accent-soft); }
+.admin-drop p { display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; justify-content: center; }
+
+.admin-issues {
+  margin: 0.4rem 0 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.76rem;
+}
+
+.admin-issues code { font-size: 0.72rem; opacity: 0.75; }
+
+/* ------------------------------------------------------------------ diff */
+
+.admin-diff { display: grid; gap: 0.55rem; }
+
+.admin-diff-item {
+  border: 1px solid var(--admin-line);
+  border-radius: 9px;
+  background: #fcfcf9;
+  padding: 0.65rem 0.75rem;
+}
+
+.admin-diff-item[data-off] { opacity: 0.45; }
+
+.admin-diff-head { align-items: flex-start; }
+.admin-diff-head span { display: grid; gap: 0.1rem; }
+.admin-diff-head strong { font-size: 0.83rem; font-weight: 600; }
+.admin-diff-head code { font-size: 0.7rem; color: var(--admin-faint); }
+
+.admin-diff-rows {
+  margin: 0.55rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+  border-top: 1px solid var(--admin-line);
+  padding-top: 0.55rem;
+}
+
+.admin-diff-rows > li { font-size: 0.8rem; }
+
+.admin-diff-fields {
+  margin: 0.3rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.76rem;
+}
+
+.admin-diff-fields > li { display: grid; gap: 0.12rem; }
+.admin-diff-fields em { font-style: normal; color: var(--admin-faint); font-size: 0.72rem; }
+
+.admin-diff-fields del,
+.admin-diff-fields ins {
+  display: block;
+  padding: 0.28rem 0.45rem;
+  border-radius: 6px;
+  text-decoration: none;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.admin-diff-fields del { background: var(--admin-danger-soft); color: #7d2b1d; }
+.admin-diff-fields ins { background: var(--admin-accent-soft); color: var(--admin-accent); }
+
+.admin-pill[data-state="added"] { background: var(--admin-accent-soft); color: var(--admin-accent); }
+.admin-pill[data-state="removed"] { background: var(--admin-danger-soft); color: var(--admin-danger); }
+
+/* ------------------------------------------------------------- revisions */
+
+.admin-revisions { margin: 0; padding: 0; list-style: none; display: grid; gap: 0.5rem; }
+
+.admin-revisions > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--admin-line);
+  border-radius: 9px;
+  background: #fcfcf9;
+  padding: 0.6rem 0.75rem;
+}
+
+.admin-revisions strong { display: block; font-size: 0.83rem; font-weight: 600; }
+.admin-revisions small { color: var(--admin-muted); font-size: 0.74rem; }
+
+/* ----------------------------------------------------------- coming soon */
+
+.admin-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-switch p { flex: 1 1 22rem; }
+.admin-switch-error { margin-top: 0.5rem; color: var(--admin-danger); font-size: 0.78rem; }

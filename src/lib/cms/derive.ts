@@ -94,7 +94,23 @@ export function launchIssues(content: SiteContent): string[] {
   ];
 }
 
+/**
+ * True while the holding page has replaced the public site.
+ *
+ * Every public page must check this and render nothing, not just the layout.
+ * Next renders a page segment and serialises its output into the RSC payload
+ * even when the layout above it discards `children` — so a page that skips
+ * this check ships its whole copy to the browser inside the very page meant
+ * to be hiding it. `(site)/layout.tsx` then draws the holding page itself.
+ */
+export const isComingSoon = (content: SiteContent): boolean => content.comingSoon.enabled;
+
 export function isIndexable(content: SiteContent): boolean {
+  /* A holding page is never worth indexing, and it outranks the manual
+     override — turning the site off is a clearer instruction than a setting
+     someone flipped to "index" weeks ago. */
+  if (content.comingSoon.enabled) return false;
+
   if (content.site.indexing === "index") return true;
   if (content.site.indexing === "noindex") return false;
   return launchIssues(content).length === 0;

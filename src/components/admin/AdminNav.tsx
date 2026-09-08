@@ -88,6 +88,22 @@ export default function AdminNav({
                 Media library
               </Link>
             </li>
+            <li>
+              <Link
+                href="/admin/import"
+                data-current={isCurrent("/admin/import") ? "" : undefined}
+              >
+                AI import
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/admin/revisions"
+                data-current={isCurrent("/admin/revisions") ? "" : undefined}
+              >
+                Revisions
+              </Link>
+            </li>
           </ul>
         </div>
 

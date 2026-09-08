@@ -7,12 +7,18 @@ import ExternalLink from "@/components/ui/ExternalLink";
 import Reveal from "@/components/ui/Reveal";
 import StarRating from "@/components/ui/StarRating";
 import { getSiteContent } from "@/lib/cms/content";
-import { primaryPlatform, telHref } from "@/lib/cms/derive";
+import { isComingSoon, primaryPlatform, telHref } from "@/lib/cms/derive";
 import { ROUTES } from "@/lib/constants";
 import { absoluteUrl } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getSiteContent();
+
+  /* A holding page should not describe the page it is standing in for — the
+     root layout's title and description carry the site instead, so a link
+     shared while the site is down previews the property, not its rates. */
+  if (isComingSoon(content)) return {};
+
   const { meta } = content.experiences;
 
   return {
@@ -35,6 +41,10 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function ExperiencesPage() {
   const content = await getSiteContent();
+
+  /* The layout draws the holding page; this segment must render nothing,
+     or its copy still reaches the browser in the RSC payload. */
+  if (isComingSoon(content)) return null;
   const { site, experiences } = content;
   const booking = primaryPlatform(content);
 

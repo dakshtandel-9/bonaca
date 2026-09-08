@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import ComingSoonToggle from "@/components/admin/ComingSoonToggle";
+
 import { getSiteContentUncached } from "@/lib/cms/content";
 import { isIndexable, launchIssues } from "@/lib/cms/derive";
 import { CMS_SCHEMA } from "@/lib/cms/schema";
@@ -45,6 +47,8 @@ export default async function AdminDashboard() {
           View site ↗
         </a>
       </div>
+
+      <ComingSoonToggle enabled={content.comingSoon.enabled} />
 
       {storageBackend === "file" ? (
         <div className="admin-notice" data-tone="warn">
@@ -117,6 +121,16 @@ export default async function AdminDashboard() {
               <p>Every photograph uploaded to the site, in one place.</p>
               <small>{mediaBackend === "r2" ? "Cloudflare R2" : "Local folder"}</small>
             </Link>
+            <Link className="admin-tile" href="/admin/import">
+              <h3>AI import</h3>
+              <p>Rewrite a page with ChatGPT, then bring the result back as one file.</p>
+              <small>Reviewed before anything is published</small>
+            </Link>
+            <Link className="admin-tile" href="/admin/revisions">
+              <h3>Revisions</h3>
+              <p>Snapshots taken before each import, and the way back from one.</p>
+              <small>Last 10 kept</small>
+            </Link>
           </div>
         </div>
       </section>
@@ -137,6 +151,10 @@ export default async function AdminDashboard() {
                     })
                   : "Never — the site is showing its shipped content"}
               </dd>
+            </div>
+            <div>
+              <dt>Public site</dt>
+              <dd>{content.comingSoon.enabled ? "Coming soon page" : "Live"}</dd>
             </div>
             <div>
               <dt>Content store</dt>

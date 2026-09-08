@@ -203,6 +203,59 @@ export const CMS_SCHEMA: PageSchema[] = [
     ],
   },
 
+  /* ---------------------------------------------------------- coming soon */
+  {
+    id: "comingSoon",
+    label: "Coming soon",
+    href: null,
+    summary: "A holding page that replaces the whole site while you finish it.",
+    sections: [
+      {
+        id: "switch",
+        label: "The switch",
+        description:
+          "While this is on, every public page shows the holding page instead of the site, and search engines are turned away. The CRM keeps working as normal, so you can carry on editing behind it.",
+        path: "comingSoon",
+        fields: [
+          {
+            kind: "boolean",
+            name: "enabled",
+            label: "Show the coming soon page",
+            help: "Takes effect the moment you publish.",
+          },
+        ],
+      },
+      {
+        id: "words",
+        label: "What it says",
+        path: "comingSoon",
+        fields: [
+          { kind: "text", name: "eyebrow", label: "Eyebrow", half: true },
+          { kind: "text", name: "title", label: "Heading" },
+        ],
+      },
+      {
+        id: "look",
+        label: "Photograph & contact",
+        path: "comingSoon",
+        fields: [
+          { kind: "image", name: "image", label: "Background photograph" },
+          { kind: "text", name: "imageAlt", label: "Alt text" },
+          {
+            kind: "boolean",
+            name: "showContact",
+            label: "Show the email and phone number",
+          },
+          {
+            kind: "boolean",
+            name: "showSocial",
+            label: "Show the Instagram and Facebook links",
+          },
+        ],
+      },
+    ],
+  },
+
   {
     id: "navigation",
     label: "Menu & footer",

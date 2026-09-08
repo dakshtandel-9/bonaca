@@ -186,6 +186,24 @@ export interface SiteContent {
     indexing: "auto" | "index" | "noindex";
   };
 
+  /**
+   * The holding page.
+   *
+   * While `enabled` is true every public page renders this instead of the
+   * site, and the whole domain is closed to search engines — a half-finished
+   * villa listing getting indexed is far harder to undo than to prevent.
+   * /admin is unaffected, so the site can go on being built behind it.
+   */
+  comingSoon: {
+    enabled: boolean;
+    eyebrow: string;
+    title: string;
+    image: string;
+    imageAlt: string;
+    showContact: boolean;
+    showSocial: boolean;
+  };
+
   navigation: {
     main: LinkItem[];
     social: SocialLinkItem[];

@@ -2582,3 +2582,129 @@ html[data-loading] body { overflow: hidden; }
   .story-image img { scale: 1; }
   [data-parallax] > * { transform: none; }
 }
+
+/* ==========================================================================
+   COMING SOON
+   The whole site, reduced to one screen. It borrows the dark band's palette
+   so the holding page reads as the same property rather than a placeholder
+   someone bolted on — full-bleed photograph, veil, and the wordmark centred.
+   ========================================================================== */
+
+.coming-soon {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: clamp(2rem, 6vw, 4.5rem) var(--gutter);
+  background: var(--ink-deep);
+  color: var(--cream);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.coming-soon-photo {
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+
+.coming-soon-veil {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    radial-gradient(120% 90% at 50% 40%, transparent 0%, rgb(20 25 8 / 62%) 72%),
+    linear-gradient(to bottom, rgb(20 25 8 / 58%), rgb(20 25 8 / 78%));
+}
+
+.coming-soon-inner {
+  position: relative;
+  z-index: 2;
+  width: min(46rem, 100%);
+  text-align: center;
+  display: grid;
+  justify-items: center;
+  gap: clamp(1rem, 2vw, 1.6rem);
+}
+
+.coming-soon-logo {
+  width: clamp(11rem, 22vw, 16rem);
+  height: auto;
+}
+
+.coming-soon-wordmark {
+  font-family: var(--serif);
+  font-size: var(--step-h3);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.coming-soon-eyebrow {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--step-label);
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--sand);
+}
+
+.coming-soon-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: var(--step-h2);
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+
+.coming-soon-contact {
+  margin: 0.4rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem clamp(1rem, 3vw, 2.2rem);
+  font-family: var(--sans);
+  font-size: var(--step-body);
+}
+
+.coming-soon-contact a {
+  color: var(--sand);
+  text-decoration: none;
+  border-bottom: 1px solid color-mix(in srgb, var(--sand) 40%, transparent);
+  padding-bottom: 0.15rem;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.coming-soon-contact a:hover { color: var(--sand-soft); border-bottom-color: var(--sand-soft); }
+
+
+.coming-soon-socials {
+  margin: clamp(0.5rem, 1.5vw, 1.2rem) 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem 1.4rem;
+  font-family: var(--sans);
+  font-size: var(--step-label);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.coming-soon-socials a {
+  color: color-mix(in srgb, var(--cream) 70%, transparent);
+  text-decoration: none;
+  transition: color 0.2s var(--ease);
+}
+
+.coming-soon-socials a:hover { color: var(--sand); }
+
+@media (prefers-reduced-motion: reduce) {
+  .coming-soon * { transition: none !important; }
+}

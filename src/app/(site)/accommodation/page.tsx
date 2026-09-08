@@ -8,12 +8,18 @@ import Icon from "@/components/ui/Icon";
 import Reveal from "@/components/ui/Reveal";
 import SectionHeader from "@/components/ui/SectionHeader";
 import { getSiteContent } from "@/lib/cms/content";
-import { formatPrice, primaryPlatform, telHref } from "@/lib/cms/derive";
+import { formatPrice, isComingSoon, primaryPlatform, telHref } from "@/lib/cms/derive";
 import { ROUTES } from "@/lib/constants";
 import { absoluteUrl } from "@/lib/seo";
 
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getSiteContent();
+
+  /* A holding page should not describe the page it is standing in for — the
+     root layout's title and description carry the site instead, so a link
+     shared while the site is down previews the property, not its rates. */
+  if (isComingSoon(content)) return {};
+
   const { meta } = content.accommodation;
 
   return {
@@ -35,6 +41,10 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function AccommodationPage() {
   const content = await getSiteContent();
+
+  /* The layout draws the holding page; this segment must render nothing,
+     or its copy still reaches the browser in the RSC payload. */
+  if (isComingSoon(content)) return null;
   const { site, accommodation } = content;
   const { rates, about, policies } = accommodation;
 

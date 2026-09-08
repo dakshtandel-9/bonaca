@@ -8,6 +8,7 @@ import RoomsSection from "@/components/sections/RoomsSection";
 import ShowcaseSection from "@/components/sections/ShowcaseSection";
 import StorySection from "@/components/sections/StorySection";
 import { getSiteContent } from "@/lib/cms/content";
+import { isComingSoon } from "@/lib/cms/derive";
 
 /**
  * Bands alternate light → dark → light so the page reads as chapters rather
@@ -19,6 +20,10 @@ import { getSiteContent } from "@/lib/cms/content";
  */
 export default async function HomePage() {
   const content = await getSiteContent();
+
+  /* The layout draws the holding page; this segment must render nothing,
+     or its copy still reaches the browser in the RSC payload. */
+  if (isComingSoon(content)) return null;
 
   return (
     <main id="main-content">

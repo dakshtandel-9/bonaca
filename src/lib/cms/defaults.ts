@@ -70,6 +70,16 @@ export const DEFAULT_CONTENT: SiteContent = {
     indexing: "auto",
   },
 
+  comingSoon: {
+    enabled: false,
+    eyebrow: "Opening soon",
+    title: "Bonaca is nearly ready.",
+    image: IMAGES.heroWide,
+    imageAlt: "The villa at dusk",
+    showContact: true,
+    showSocial: true,
+  },
+
   navigation: {
     main: mainNavigation.map((item) => ({
       id: item.id,
