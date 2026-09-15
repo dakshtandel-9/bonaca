@@ -1,5 +1,6 @@
 import "server-only";
 
+import { randomUUID } from "node:crypto";
 import { mkdir, readFile, readdir, unlink, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
@@ -24,7 +25,7 @@ const LOCAL_DIR = join(process.cwd(), ".data", "revisions");
 const KEEP = 10;
 
 export interface RevisionMeta {
-  /** Why the snapshot was taken — always "import" today. */
+  /** Why the snapshot was taken: import, mcp, or restore. */
   reason: string;
   /** The page group the import was scoped to. */
   scope: string;
@@ -42,7 +43,7 @@ interface RevisionRecord extends Revision {
 }
 
 /** Firestore doc ids and filenames share this, so the two stores stay in step. */
-const newId = (): string => new Date().toISOString().replace(/[:.]/g, "-");
+const newId = (): string => `${new Date().toISOString().replace(/[:.]/g, "-")}-${randomUUID()}`;
 
 /** A row for the list: everything except the site it is holding. */
 const summarise = (record: RevisionRecord): Revision => ({

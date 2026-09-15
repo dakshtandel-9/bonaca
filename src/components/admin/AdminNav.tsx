@@ -97,6 +97,11 @@ export default function AdminNav({
               </Link>
             </li>
             <li>
+              <Link href="/admin/integrations" data-current={isCurrent("/admin/integrations") ? "" : undefined}>
+                AI connections
+              </Link>
+            </li>
+            <li>
               <Link
                 href="/admin/revisions"
                 data-current={isCurrent("/admin/revisions") ? "" : undefined}

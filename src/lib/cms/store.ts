@@ -1,9 +1,11 @@
 import "server-only";
 
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile, rename, rmdir, unlink } from "node:fs/promises";
+import { randomUUID } from "node:crypto";
 import { dirname, join } from "node:path";
 
 import { withDefaults } from "@/lib/cms/merge";
+import { contentVersion } from "@/lib/cms/mcp-content";
 import type { SiteContent, StoredContent } from "@/lib/cms/types";
 import {
   CONTENT_COLLECTION,
@@ -28,29 +30,36 @@ export const storageBackend: "firestore" | "file" = isFirebaseConfigured
   ? "firestore"
   : "file";
 
-async function readLocal(): Promise<StoredContent | null> {
+async function readLocal(strict = false): Promise<StoredContent | null> {
   try {
     const raw = await readFile(LOCAL_FILE, "utf8");
     return JSON.parse(raw) as StoredContent;
-  } catch {
+  } catch (error) {
+    if (strict && (error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
     return null;
   }
 }
 
 async function writeLocal(record: StoredContent): Promise<void> {
   await mkdir(dirname(LOCAL_FILE), { recursive: true });
-  await writeFile(LOCAL_FILE, `${JSON.stringify(record, null, 2)}\n`, "utf8");
+  const temporary = `${LOCAL_FILE}.${randomUUID()}.tmp`;
+  try {
+    await writeFile(temporary, `${JSON.stringify(record, null, 2)}\n`, "utf8");
+    await rename(temporary, LOCAL_FILE);
+  } finally {
+    await unlink(temporary).catch(() => undefined);
+  }
 }
 
 /**
  * The raw stored document, or `null` when nothing has been published yet.
- * Never throws: a Firestore outage falls back to the shipped defaults rather
- * than taking the public site down with it.
+ * Public reads fall back on storage errors. Pass strict=true for editing so an
+ * outage cannot turn into a write based on fallback content.
  */
-export async function readStoredContent(): Promise<StoredContent | null> {
+export async function readStoredContent(strict = false): Promise<StoredContent | null> {
   const db = getDb();
 
-  if (!db) return readLocal();
+  if (!db) return readLocal(strict);
 
   try {
     const snapshot = await db.collection(CONTENT_COLLECTION).doc(CONTENT_DOCUMENT).get();
@@ -58,6 +67,7 @@ export async function readStoredContent(): Promise<StoredContent | null> {
 
     return snapshot.data() as StoredContent;
   } catch (error) {
+    if (strict) throw error;
     console.error("[cms] Firestore read failed, falling back to defaults:", error);
     return readLocal();
   }
@@ -67,6 +77,7 @@ export async function readStoredContent(): Promise<StoredContent | null> {
 export async function writeStoredContent(
   content: SiteContent,
   updatedBy: string,
+  expectedVersion?: string,
 ): Promise<StoredContent> {
   const record: StoredContent = {
     /* Merged on the way in as well as on the way out, so a truncated payload
@@ -79,13 +90,45 @@ export async function writeStoredContent(
   const db = getDb();
 
   if (db) {
-    await db
-      .collection(CONTENT_COLLECTION)
-      .doc(CONTENT_DOCUMENT)
-      .set(record, { merge: false });
+    const ref = db.collection(CONTENT_COLLECTION).doc(CONTENT_DOCUMENT);
+    if (expectedVersion !== undefined) {
+      await db.runTransaction(async (transaction) => {
+        const snapshot = await transaction.get(ref);
+        assertContentVersion(snapshot.data() as StoredContent | undefined, expectedVersion);
+        transaction.set(ref, record);
+      });
+    } else {
+      await ref.set(record, { merge: false });
+    }
   } else {
-    await writeLocal(record);
+    // Every local writer uses the same lock, including the existing admin routes.
+    await mkdir(dirname(LOCAL_FILE), { recursive: true });
+    const lock = `${LOCAL_FILE}.lock`;
+    let acquired = false;
+    for (let attempt = 0; attempt < 100; attempt++) {
+      try {
+        await mkdir(lock);
+        acquired = true;
+        break;
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== "EEXIST") throw error;
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+    }
+    if (!acquired) throw new Error("Content is busy. Retry shortly.");
+    try {
+      if (expectedVersion !== undefined) assertContentVersion(await readLocal(true), expectedVersion);
+      await writeLocal(record);
+    } finally {
+      await rmdir(lock);
+    }
   }
 
   return record;
+}
+
+function assertContentVersion(stored: StoredContent | null | undefined, expected: string) {
+  if (contentVersion(withDefaults(stored?.content)) !== expected) {
+    throw new Error("Content changed since it was read. Read it again before applying edits.");
+  }
 }

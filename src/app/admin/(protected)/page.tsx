@@ -126,6 +126,11 @@ export default async function AdminDashboard() {
               <p>Rewrite a page with ChatGPT, then bring the result back as one file.</p>
               <small>Reviewed before anything is published</small>
             </Link>
+            <Link className="admin-tile" href="/admin/integrations">
+              <h3>AI connections</h3>
+              <p>Let a connected assistant edit page text, rates, images and lists directly.</p>
+              <small>MCP connection and setup status</small>
+            </Link>
             <Link className="admin-tile" href="/admin/revisions">
               <h3>Revisions</h3>
               <p>Snapshots taken before each import, and the way back from one.</p>

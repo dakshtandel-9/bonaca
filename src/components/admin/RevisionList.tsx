@@ -7,6 +7,7 @@ import type { Revision } from "@/lib/cms/revisions";
 
 const WHY: Record<string, string> = {
   import: "before an AI import",
+  mcp: "before an AI connection edit",
   restore: "before restoring an earlier snapshot",
 };
 

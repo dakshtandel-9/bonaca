@@ -57,6 +57,17 @@ add the field to `types.ts`, give it a default in `defaults.ts`, describe it in
 a custom domain — because that is what gets written into the content as an image
 `src`. Enable public access on the bucket, or the site renders broken images.
 
+## Direct AI editing (MCP)
+
+Connect ChatGPT or another MCP client to `/api/mcp` to edit text, numbers,
+images, links and lists directly through conversation. The server validates
+edits, checks for concurrent changes, saves an undo revision and refreshes the
+public pages. Connection status is at `/admin/integrations`.
+
+See [MCP setup and client configuration](docs/mcp.md) for OAuth, machine-token
+access and examples. Credentials and a deployed connection are required before
+an external assistant can edit the site.
+
 ## Structure
 
 - `src/app/(site)` — the public pages
