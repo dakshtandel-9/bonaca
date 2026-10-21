@@ -1,7 +1,14 @@
 import Image from "next/image";
 
 import ExternalLink from "@/components/ui/ExternalLink";
-import { isPlaceholderEmail, isPlaceholderLink, isPlaceholderPhone, telHref } from "@/lib/cms/derive";
+import {
+  isPlaceholderEmail,
+  isPlaceholderLink,
+  isPlaceholderLocation,
+  isPlaceholderPhone,
+  telHref,
+  whatsappNumber,
+} from "@/lib/cms/derive";
 import type { SiteContent } from "@/lib/cms/types";
 
 /**
@@ -16,8 +23,20 @@ import type { SiteContent } from "@/lib/cms/types";
 export default function ComingSoon({ content }: { content: SiteContent }) {
   const { comingSoon, site, navigation } = content;
 
-  const showEmail = comingSoon.showContact && !isPlaceholderEmail(site.contact.email);
-  const showPhone = comingSoon.showContact && !isPlaceholderPhone(site.contact.phone);
+  const { contact, place } = site;
+  const show = comingSoon.showContact;
+  const phone = show && !isPlaceholderPhone(contact.phone) ? contact.phone : null;
+  const whatsapp = show ? whatsappNumber(contact.whatsapp) : null;
+  const email = show && !isPlaceholderEmail(contact.email) ? contact.email : null;
+  const address = !show
+    ? null
+    : place.address.trim() ||
+      (isPlaceholderLocation(place.locality)
+        ? null
+        : [place.locality, place.region].filter(Boolean).join(", "));
+  const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    [site.name, address].filter(Boolean).join(", "),
+  )}`;
   const socials = comingSoon.showSocial
     ? navigation.social.filter((link) => !isPlaceholderLink(link.url))
     : [];
@@ -58,19 +77,41 @@ export default function ComingSoon({ content }: { content: SiteContent }) {
 
         <h1 className="coming-soon-title">{comingSoon.title}</h1>
 
-        {showEmail || showPhone ? (
-          <ul className="coming-soon-contact">
-            {showPhone ? (
-              <li>
-                <a href={telHref(site.contact.phone)}>{site.contact.phone}</a>
-              </li>
+        {phone || whatsapp || email || address ? (
+          <dl className="coming-soon-contact">
+            {phone ? (
+              <div>
+                <dt>Call</dt>
+                <dd>
+                  <a href={telHref(phone)}>{phone}</a>
+                </dd>
+              </div>
             ) : null}
-            {showEmail ? (
-              <li>
-                <a href={`mailto:${site.contact.email}`}>{site.contact.email}</a>
-              </li>
+            {whatsapp ? (
+              <div>
+                <dt>WhatsApp</dt>
+                <dd>
+                  <ExternalLink href={contact.whatsapp}>{whatsapp}</ExternalLink>
+                </dd>
+              </div>
             ) : null}
-          </ul>
+            {email ? (
+              <div>
+                <dt>Email</dt>
+                <dd>
+                  <a href={`mailto:${email}`}>{email}</a>
+                </dd>
+              </div>
+            ) : null}
+            {address ? (
+              <div className="coming-soon-address">
+                <dt>Visit</dt>
+                <dd>
+                  <ExternalLink href={mapHref}>{address}</ExternalLink>
+                </dd>
+              </div>
+            ) : null}
+          </dl>
         ) : null}
 
         {socials.length > 0 ? (

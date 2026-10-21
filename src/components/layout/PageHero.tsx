@@ -14,6 +14,8 @@ interface PageHeroProps {
   headingId: string;
   /** Anything that sits under the copy — a stat row, a pair of buttons. */
   children?: ReactNode;
+  /** When given, sits to the right of the copy and the stat row instead of below them. */
+  aside?: ReactNode;
 }
 
 /**
@@ -28,12 +30,14 @@ export default function PageHero({
   lede,
   headingId,
   children,
+  aside,
 }: PageHeroProps) {
   return (
     <section className="page-hero band-dark" aria-labelledby={headingId}>
       <span className="grain" aria-hidden="true" />
 
-      <Container>
+      <Container className={aside ? "page-hero-split" : undefined}>
+        <div className="page-hero-copy">
         <Reveal as="p" variant="fade" className="section-eyebrow">
           {index ? <span className="section-index">{index}</span> : null}
           <Monogram size={0.85} className="section-mark" />
@@ -51,6 +55,9 @@ export default function PageHero({
         ) : null}
 
         {children}
+        </div>
+
+        {aside ? <div className="page-hero-aside">{aside}</div> : null}
       </Container>
     </section>
   );

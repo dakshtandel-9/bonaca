@@ -40,7 +40,6 @@ export const footerLinkGroups: FooterLinkGroup[] = [
     id: "guest-information",
     title: "Guests",
     items: [
-      { id: "rates", label: "Rates", href: `${ROUTES.accommodation}#rates` },
       { id: "amenities", label: "Amenities", href: `${ROUTES.accommodation}#amenities` },
       { id: "policies", label: "Policies", href: `${ROUTES.accommodation}#policies` },
       { id: "faqs", label: "FAQs", href: ROUTES.knowBeforeYouBook },

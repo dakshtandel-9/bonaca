@@ -7,7 +7,15 @@ export type AmenityIconKey =
   | "parking"
   | "water"
   | "leaf"
-  | "bell";
+  | "bell"
+  | "pool"
+  | "guests"
+  | "stairs"
+  | "bed"
+  | "binoculars"
+  | "tea"
+  | "forest"
+  | "mountain";
 
 export interface Amenity {
   id: string;

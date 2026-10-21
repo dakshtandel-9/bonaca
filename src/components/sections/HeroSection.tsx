@@ -5,14 +5,6 @@ import { primaryPlatform } from "@/lib/cms/derive";
 import type { SiteContent } from "@/lib/cms/types";
 import { SECTION_IDS } from "@/lib/constants";
 
-function AirbnbMark() {
-  return (
-    <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <path d="M16 5.1c-2.2 0-3.5 1.9-4.4 4l-5.4 11.5c-.8 1.8-.3 4 1.3 5.1 1.6 1.1 3.7.8 5-.6l3.5-3.8 3.5 3.8c1.3 1.4 3.4 1.7 5 .6 1.6-1.1 2.1-3.3 1.3-5.1L20.4 9.1c-.9-2-2.2-4-4.4-4Zm0 12.4c-1.5-1.9-2.4-3.6-2.4-5a2.4 2.4 0 1 1 4.8 0c0 1.4-.9 3.1-2.4 5Zm-5.1 5.9c-.6.7-1.6.8-2.3.3-.7-.5-.9-1.4-.5-2.3l3.8-8.1c.2 2 1.3 4.1 2.7 5.9l-3.7 4.2Zm12.5.3c-.7.5-1.7.4-2.3-.3l-3.7-4.2c1.4-1.8 2.5-3.9 2.7-5.9l3.8 8.1c.4.9.2 1.8-.5 2.3Z" />
-    </svg>
-  );
-}
-
 /** Art-directed full-bleed hero: landscape on larger screens, portrait on phones. */
 export default function HeroSection({ content }: { content: SiteContent }) {
   const hero = content.home.hero;
@@ -67,7 +59,6 @@ export default function HeroSection({ content }: { content: SiteContent }) {
 
           <div className="hero-actions">
             <ExternalLink href={booking?.url ?? "#"} data-variant="primary">
-              <AirbnbMark />
               <span>{hero.ctaLabel}</span>
               <span className="hero-cta-arrow" aria-hidden="true">↗</span>
             </ExternalLink>

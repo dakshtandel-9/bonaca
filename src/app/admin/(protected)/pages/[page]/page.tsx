@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import ContentEditor from "@/components/admin/ContentEditor";
 import { getSiteContentUncached } from "@/lib/cms/content";
+import { contentVersion } from "@/lib/cms/mcp-content";
 import { findPageSchema } from "@/lib/cms/schema";
 import { readStoredContent } from "@/lib/cms/store";
 
@@ -26,6 +27,7 @@ export default async function AdminPageEditor({ params }: PageProps<"/admin/page
       key={schema.id}
       page={schema}
       initialContent={content}
+      initialVersion={contentVersion(content)}
       updatedAt={stored?.updatedAt ?? null}
     />
   );

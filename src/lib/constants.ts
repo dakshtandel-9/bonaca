@@ -8,8 +8,8 @@ export const SECTION_IDS = {
   story: "story",
   rooms: "rooms",
   gallery: "gallery",
-  showcase: "showcase",
   moments: "moments",
+  region: "dooars",
   amenities: "amenities",
   reviews: "reviews",
 } as const;

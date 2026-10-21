@@ -22,7 +22,6 @@ import { mainNavigation } from "@/data/navigation";
 import { overviewStatement, property, propertyStats } from "@/data/property";
 import { reviews } from "@/data/reviews";
 import { rooms } from "@/data/rooms";
-import { showcaseFrames } from "@/data/showcase";
 import type { SiteContent } from "@/lib/cms/types";
 import { IMAGES } from "@/lib/constants";
 import { siteConfig } from "@/lib/site-config";
@@ -58,6 +57,7 @@ export const DEFAULT_CONTENT: SiteContent = {
       googleMaps: siteConfig.links.googleMaps,
     },
     place: {
+      address: "",
       locality: siteConfig.place.locality,
       region: siteConfig.place.region,
       countryCode: siteConfig.place.countryCode,
@@ -216,35 +216,46 @@ export const DEFAULT_CONTENT: SiteContent = {
       })),
     },
 
-    showcase: {
-      index: "05",
-      eyebrow: "In detail",
-      title: "One frame at a time.",
-      description: "The same house, taken slowly. Hover a panel to open it.",
-      frames: showcaseFrames.map((frame) => ({
-        id: frame.id,
-        label: frame.label ?? "",
-        image: frame.image,
-        alt: frame.alt ?? "",
-      })),
-    },
-
     moments: {
-      index: "06",
+      index: "05",
       eyebrow: "A day here",
-      title: "Sunrise to properly dark.",
-      description: "",
+      title: "From the first light to a properly dark night.",
+      description:
+        "At Bonaca, the day moves at your pace. Mornings with birds and unhurried breakfasts, days that can be spent by the pool or out exploring the Dooars, evenings that slow down with good food, and nights that are truly dark.",
       items: moments.map((moment) => ({ ...moment })),
+      navLabel: "Explore the day",
+      ctaLabel: "Plan Your Stay",
+      ctaHref: "/accommodation",
     },
 
     amenities: {
-      index: "07",
+      index: "06",
       eyebrow: "Amenities",
       title: "Everything, quietly handled.",
       description: "The list is short because everything on it actually works.",
     },
 
+    region: {
+      index: "07",
+      eyebrow: "The Dooars",
+      title: "A different side of North Bengal.",
+      paragraphs: [
+        "The Dooars takes its name from the gateways to Bhutan. Here, tea gardens give way to forests, rivers wind through the foothills, and life moves to a different rhythm.",
+        "Bonaca is in Nagrakata, in the heart of this lesser-known corner of North Bengal. Head out to discover the region, or stay in and let the day unfold around you.",
+      ],
+      ctaLabel: "Discover the Dooars",
+      ctaHref: "/experiences",
+      image: IMAGES.galleryFieldsMorning,
+      imageAlt: "Open green fields and a line of trees beyond Bonaca's walled garden in the early light",
+      highlights: [
+        { id: "tea-gardens", label: "Tea gardens", iconKey: "tea" },
+        { id: "forests", label: "Forests", iconKey: "forest" },
+        { id: "foothills", label: "Foothills", iconKey: "mountain" },
+      ],
+    },
+
     reviews: {
+      visible: true,
       index: "08",
       eyebrow: "Guests",
       title: "In their words.",
@@ -306,17 +317,174 @@ export const DEFAULT_CONTENT: SiteContent = {
       paragraphs: [...aboutTheVilla],
     },
     rooms: {
-      index: "04",
+      index: "02",
       eyebrow: "Rooms",
       title: "Three bedrooms, each with its own bathroom.",
       description: "Take whichever you like — nobody is assigned a room here.",
       items: bedrooms.map((room) => ({ ...room, features: [...room.features] })),
     },
-    amenities: {
+    stays: {
+      index: "03",
+      eyebrow: "Choose your stay",
+      title: "One duplex, or the whole of Bonaca.",
+      description:
+        "Both duplexes share the pool and the grounds. Book one for yourselves, or reserve both and keep the place to your group.",
+      items: [
+        {
+          id: "one-duplex",
+          tag: "Duplex villa",
+          name: "One duplex",
+          availability: "Two duplexes on the property",
+          photos: [
+            { id: "compound", src: IMAGES.galleryCompound, alt: "A duplex lit up at dusk across the lawn" },
+            { id: "bedroom", src: IMAGES.galleryBedroomCourtyard, alt: "A bedroom opening onto the courtyard" },
+            { id: "lounge", src: IMAGES.galleryLounge, alt: "The sunken lounge, lit for the evening" },
+          ],
+          facts: [
+            { id: "guests", iconKey: "guests", label: "Up to 4 adults" },
+            { id: "levels", iconKey: "stairs", label: "Two levels" },
+            { id: "rooftop", iconKey: "home", label: "Private rooftop" },
+          ],
+          planTitle: "Breakfast, whenever",
+          inclusions: [
+            "Breakfast served when you are ready, not at a set hour",
+            "High-speed Wi-Fi",
+            "The cocktail pool, courtyard and grounds",
+          ],
+          note: "Lunch and dinner are cooked to order. Tell us what you would like when you book.",
+          highlightLabel: "Best for",
+          highlightValue: "Couples, friends or a small family",
+        },
+        {
+          id: "both-duplexes",
+          tag: "Whole property",
+          name: "Both duplexes",
+          availability: "All of Bonaca, for your group alone",
+          photos: [
+            { id: "aerial", src: IMAGES.galleryAerial, alt: "Both duplexes and the grounds from above at night" },
+            { id: "pool", src: IMAGES.galleryPoolWalk, alt: "The pool beside the walk at blue hour" },
+            { id: "lawn", src: IMAGES.galleryLawn, alt: "The lawn in front of the duplexes" },
+          ],
+          facts: [
+            { id: "guests", iconKey: "guests", label: "Up to 8 adults" },
+            { id: "duplexes", iconKey: "stairs", label: "Two duplexes" },
+            { id: "pool", iconKey: "pool", label: "Pool to yourselves" },
+          ],
+          planTitle: "Breakfast, whenever",
+          inclusions: [
+            "Breakfast for everyone, whenever you are ready",
+            "High-speed Wi-Fi throughout",
+            "The pool and grounds with no other guests",
+          ],
+          note: "Lunch and dinner are cooked to order. Tell us what you would like when you book.",
+          highlightLabel: "Best for",
+          highlightValue: "Families and groups travelling together",
+        },
+      ],
+      detailsLabel: "See the bedrooms",
+      selectLabel: "Select",
+      selectedLabel: "Selected",
+      summaryTitle: "Your stay",
+      emptyLabel: "Choose a stay to see it here.",
+      summaryRows: [{ id: "minimum", label: "Minimum stay", value: minimumStay }],
+      summaryNote: "Rates and availability are confirmed when you book or call us.",
+      primaryCtaLabel: "Book now",
+      callCtaLabel: "Call us",
+    },
+    amenitiesIndex: "04",
+    meals: {
       index: "05",
-      eyebrow: "Amenities",
-      title: "Everything, quietly handled.",
-      description: "The list is short because everything on it actually works.",
+      eyebrow: "Meals",
+      title: "Good food, at your own pace.",
+      description:
+        "Everything is cooked in the house kitchen and served where you would like it — the courtyard, the rooftop or by the pool.",
+      items: [
+        {
+          id: "breakfast",
+          name: "Breakfast",
+          time: "Whenever you're ready",
+          tag: "Every morning",
+          description:
+            "No alarms and no fixed hour. A fresh, unhurried spread — fruit, eggs the way you like them, something regional, and good tea or coffee.",
+          image: IMAGES.fields,
+          imageAlt: "Green fields beyond the house in the morning light",
+        },
+        {
+          id: "lunch",
+          name: "Lunch",
+          time: "Midday",
+          tag: "On request",
+          description: "Home-style regional cooking, or something lighter if you are heading out for the afternoon.",
+          image: IMAGES.galleryPoolWalk,
+          imageAlt: "The pool and the walk beside it",
+        },
+        {
+          id: "evening-tea",
+          name: "Evening tea",
+          time: "Around sunset",
+          tag: "On request",
+          description: "Tea from the gardens around you, with something warm on the side as the light goes.",
+          image: IMAGES.galleryCourtyardSunset,
+          imageAlt: "The courtyard at sunset",
+        },
+        {
+          id: "dinner",
+          name: "Dinner",
+          time: "When you sit down",
+          tag: "On request",
+          description: "Chef-cooked meals with regional flavours, served when you are ready and with time for conversation.",
+          image: IMAGES.galleryLanterns,
+          imageAlt: "Lanterns lit in the courtyard after dark",
+        },
+      ],
+      note: "Vegetarian, Jain or an allergy to plan around? Tell us when you book and the kitchen will cook around you.",
+    },
+    wildlife: {
+      index: "06",
+      eyebrow: "Wildlife nearby",
+      title: "The forests are closer than you think.",
+      description:
+        "Nagrakata sits among some of the best-known wildlife parks in North Bengal. Most are an easy morning drive for a jeep safari, with time to be back for lunch.",
+      image: "",
+      imageAlt: "",
+      items: [
+        {
+          id: "chapramari",
+          name: "Chapramari Wildlife Sanctuary",
+          highlight: "Elephants, gaur and birdlife",
+          distanceKm: 20,
+          driveTime: "About 30 min",
+        },
+        {
+          id: "gorumara",
+          name: "Gorumara National Park",
+          highlight: "One-horned rhino, gaur and elephants",
+          distanceKm: 35,
+          driveTime: "About 50 min",
+        },
+        {
+          id: "neora-valley",
+          name: "Neora Valley National Park",
+          highlight: "Dense hill forest and red panda country",
+          distanceKm: 40,
+          driveTime: "About 1 hr 15 min",
+        },
+        {
+          id: "jaldapara",
+          name: "Jaldapara National Park",
+          highlight: "Rhino, elephants and open grassland",
+          distanceKm: 60,
+          driveTime: "About 1 hr 30 min",
+        },
+        {
+          id: "buxa",
+          name: "Buxa Tiger Reserve",
+          highlight: "Forest trails and the old Buxa fort",
+          distanceKm: 95,
+          driveTime: "About 2 hr 15 min",
+        },
+      ],
+      note: "Distances are by road from Bonaca and approximate. Safari slots are limited and the parks close for the monsoon, from mid-June to mid-September — ask us and we will help you plan.",
     },
     gallery: {
       index: "06",

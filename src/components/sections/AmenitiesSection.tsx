@@ -9,7 +9,14 @@ import { SECTION_IDS } from "@/lib/constants";
  * Dark band. A hairline register rather than a grid of boxes: each row is a
  * rule that lights up on hover, with the icon sitting in the left margin.
  */
-export default function AmenitiesSection({ content }: { content: SiteContent }) {
+export default function AmenitiesSection({
+  content,
+  index,
+}: {
+  content: SiteContent;
+  /** The accommodation page shows this same band under its own chapter number. */
+  index?: string;
+}) {
   const section = content.home.amenities;
   const amenities = content.amenities.items;
   if (amenities.length === 0) return null;
@@ -20,7 +27,7 @@ export default function AmenitiesSection({ content }: { content: SiteContent }) 
 
       <Container>
         <SectionHeader
-          index={section.index}
+          index={index ?? section.index}
           eyebrow={section.eyebrow}
           headingId="amenities-title"
           title={section.title}

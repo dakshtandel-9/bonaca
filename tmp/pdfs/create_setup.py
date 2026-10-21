@@ -1,0 +1,100 @@
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak, Preformatted
+from reportlab.lib import colors
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_LEFT
+from reportlab.lib.pagesizes import A4
+from xml.sax.saxutils import escape
+
+OUT='output/pdf/Bonaca-MCP-Connection-Setup.pdf'
+W,H=A4
+olive=colors.HexColor('#283019'); ink=colors.HexColor('#252923'); muted=colors.HexColor('#64705D'); cream=colors.HexColor('#F5F3EB'); peach=colors.HexColor('#F3DDBF')
+styles=getSampleStyleSheet()
+styles.add(ParagraphStyle(name='TitleB',fontName='Helvetica-Bold',fontSize=24,leading=28,textColor=olive,spaceAfter=10))
+styles.add(ParagraphStyle(name='SubB',fontName='Helvetica',fontSize=11,leading=15,textColor=muted,spaceAfter=10))
+styles.add(ParagraphStyle(name='HeadingB',fontName='Helvetica-Bold',fontSize=12.5,leading=16,textColor=olive,spaceBefore=9,spaceAfter=5))
+styles.add(ParagraphStyle(name='BodyB',fontName='Helvetica',fontSize=10,leading=13.5,textColor=ink,spaceAfter=6))
+styles.add(ParagraphStyle(name='SmallB',fontName='Helvetica',fontSize=8.5,leading=12,textColor=muted,spaceAfter=6))
+styles.add(ParagraphStyle(name='CodeB',fontName='Courier',fontSize=8.4,leading=10.5,textColor=ink,backColor=cream,borderPadding=8,spaceBefore=5,spaceAfter=10))
+story=[]
+def p(t,sty='BodyB'): story.append(Paragraph(t,styles[sty]))
+def heading(t):p(t,'HeadingB')
+def code(t):story.append(Preformatted(t,styles['CodeB']))
+def title(n,t,sub):p('BONACA  /  CONNECTION GUIDE  /  '+n,'SmallB');p(t,'TitleB');p(sub,'SubB')
+def table(rows,widths):
+    data=[[Paragraph(str(v),styles['BodyB']) for v in row] for row in rows]
+    t=Table(data,colWidths=widths,hAlign='LEFT')
+    t.setStyle(TableStyle([('VALIGN',(0,0),(-1,-1),'TOP'),('BACKGROUND',(0,0),(-1,0),peach),('LINEBELOW',(0,0),(-1,-1),.4,colors.HexColor('#DADDD3')),('LEFTPADDING',(0,0),(-1,-1),9),('RIGHTPADDING',(0,0),(-1,-1),9),('TOPPADDING',(0,0),(-1,-1),5),('BOTTOMPADDING',(0,0),(-1,-1),3)]))
+    story.append(t);story.append(Spacer(1,9))
+def step(n,t,body):heading(str(n)+'. '+t);p(body)
+def page():story.append(PageBreak())
+def footer(c,d):
+    c.setStrokeColor(colors.HexColor('#DADDD3')); c.line(44,42,W-44,42)
+    c.setFont('Helvetica',8);c.setFillColor(muted);c.drawString(44,28,'BONACA  |  thebonaca.com  |  15 September 2026');c.drawRightString(W-44,28,str(d.page))
+
+title('01','Connect your website\nto an AI assistant','A practical setup guide for the Bonaca CRM at thebonaca.com.')
+p('Once connected, you can ask the assistant to edit hero text, rates, links, images or lists. It publishes requested changes through the same content system as your CRM and saves a revision for undo.')
+heading('First: fix the localhost address')
+p('Your screenshot shows <b>http://localhost:3000/api/mcp</b> on the live website. The code uses that fallback when the site URL is absent; a localhost value can also be set explicitly. Localhost points to the computer making the request, so it is not your public website address.')
+step(1,'Update the hosting environment','In the hosting project for this website, open its environment-variable settings. Add or replace the following value for the <b>Production</b> environment. If you use Vercel, this is in the project settings. Updating only your local .env file does not update the deployed site.')
+code('NEXT_PUBLIC_SITE_URL=https://thebonaca.com')
+step(2,'Rebuild and redeploy','This NEXT_PUBLIC value can be embedded during the build. Trigger a new production build and deployment after saving it.')
+step(3,'Check the CRM again','Open <link href="https://thebonaca.com/admin/integrations" color="#385731">thebonaca.com/admin/integrations</link>. The connection URL should now be:')
+code('https://thebonaca.com/api/mcp')
+p('<b>This fixes the address only.</b> Your screenshot also shows "OAuth setup required" and "Access token not configured". Complete one of the authentication paths below.')
+table([['I want to connect...','Follow...'],['ChatGPT in the browser','OAuth setup on page 2, then connection steps on page 3.'],['Codex CLI / a bearer-token MCP client','The machine-token setup on page 4.']], [218,289])
+p('No OpenAI API key is required by this MCP endpoint. One connection controls this Bonaca deployment; other CRM websites need their own connections.','SmallB')
+page()
+
+title('02','Prepare ChatGPT sign-in','For your developer or hosting administrator. Complete this once before connecting ChatGPT.')
+p('<b>OAuth</b> is the account sign-in system that gives ChatGPT permission to access this website. The MCP code validates OAuth tokens, but an external identity provider must issue them. The existing Bonaca admin password is not an OAuth provider.')
+step(1,'Configure an OAuth provider','Use your organization\'s identity provider if it supports MCP authorization. Enable authorization-code sign-in with PKCE S256, public OAuth/OIDC discovery, and a supported client registration method. Provider dashboard names vary; use the configuration contract below.')
+table([['Setting','Required value for this implementation'],['Resource / token audience','<font face="Courier" size="8.8">https://thebonaca.com/api/mcp</font>'],['Editor permissions','<font face="Courier" size="9">content:read content:write</font><br/>Only grant these to authorized Bonaca editors.'],['Access token format','Signed JWT using RS256 or ES256. Include iss, sub, iat, exp, aud and a space-separated scope claim.'],['Resource handling','Honor the OAuth resource parameter and issue the token for the exact audience above.'],['Client registration','CIMD, dynamic client registration, or a predefined OAuth client configured in ChatGPT.']], [144,363])
+step(2,'Copy the provider settings to the host','Get the exact issuer and jwks_uri from the provider\'s discovery document. JWKS is the public URL of its signing keys. Preserve the issuer exactly, including a trailing slash if supplied. Replace the two placeholders below with actual HTTPS values.')
+code('NEXT_PUBLIC_SITE_URL=https://thebonaca.com\nMCP_OAUTH_ISSUER=<exact HTTPS issuer>\nMCP_OAUTH_JWKS_URL=<HTTPS jwks_uri>')
+p('Redeploy after saving. A predefined OAuth client may also need a client ID and secret entered into ChatGPT; those are provider credentials, not MCP_API_TOKEN. Register the exact callback URL shown by ChatGPT with your provider.')
+step(3,'Check discovery','Open this URL. It should return JSON with resource set to the MCP URL and authorization_servers containing your issuer:')
+code('https://thebonaca.com/.well-known/\noauth-protected-resource/api/mcp')
+p('The address above wraps for readability: join the two lines without spaces. A 503 means the OAuth variables are not configured. Use Firestore for content on serverless hosting; your screenshot already reports Firebase.','SmallB')
+p('Provider requirements: <link href="https://developers.openai.com/plugins/build/auth" color="#385731">OpenAI authentication guide</link>.','SmallB')
+page()
+
+title('03','Connect and test ChatGPT','Use the live endpoint after the URL and OAuth setup are complete.')
+step(1,'Enable developer mode','In ChatGPT, open <b>Settings &gt; Security and login &gt; Developer mode</b>. Availability depends on your account and workspace policy. If the option is absent, check with the workspace administrator. [1]')
+step(2,'Add the server','Open ChatGPT\'s <b>Plugins</b> page and select the plus button to add a connection. Enter a name and description, choose the public endpoint connection, and enter this server URL. Select OAuth authentication when prompted. [1]')
+code('Name: Bonaca CRM\nMCP server URL: https://thebonaca.com/api/mcp\nAuthentication: OAuth')
+p('Sign in with an account your provider authorizes for Bonaca. Allow content:read and content:write. For a predefined client, finish the callback registration from page 2 using the URL shown by ChatGPT.')
+step(3,'Review and enable the connection','The server exposes seven tools: list_content_fields, read_content, preview_edits, update_content, list_media, list_revisions and restore_revision. Start a new conversation and add Bonaca from the tools menu. [1]')
+step(4,'Test a read first','Send: <b>"Use Bonaca CRM to show me the current homepage hero text. Do not change anything."</b><br/>Check that the result matches your CRM. A successful sign-in alone does not prove publishing permissions work.')
+step(5,'Make one small edit and verify it','When ready to change your site, send: <b>"Set the homepage hero eyebrow to Private stays, beautifully unhurried. Publish it."</b><br/>Approve the write if ChatGPT asks. Check the saved field in the CRM and the public page. If Coming soon is enabled, the regular hero remains hidden until that setting is changed.')
+step(6,'Test undo if needed','Send: <b>"Undo that last website edit by restoring the snapshot taken immediately before it."</b><br/>You can also use <b>CRM &gt; Revisions</b>. A restore replaces the whole site content, so avoid restoring across unrelated edits you want to keep.')
+p('<b>Daily use:</b> Ask for several edits in one request. The server checks field types and the content version, saves a snapshot, then publishes. Reload any already-open CRM editor before saving it after an AI edit.')
+p('[1] <link href="https://developers.openai.com/plugins/deploy/connect-chatgpt" color="#385731">Official ChatGPT connection and testing instructions</link>. UI labels may change; checked 15 September 2026.','SmallB')
+page()
+
+title('04','Alternative: connect Codex','For Codex CLI or another MCP client that supports a bearer token. This path does not require an OAuth provider.')
+step(1,'Generate a separate machine credential','Run this locally and keep the generated value private:')
+code('openssl rand -hex 32')
+p('Save the result in the hosting project as <b>MCP_API_TOKEN</b>, then redeploy. The server rejects tokens shorter than 32 characters. Do not use your CRM password. This token has full content access to this site.')
+step(2,'Make the token available to Codex CLI','In a local terminal, enter the same value using a hidden prompt. The following commands are for zsh on macOS:')
+code('read -rs "BONACA_MCP_TOKEN?Paste MCP token: "\nexport BONACA_MCP_TOKEN\nprintf "\\n"')
+p('The prompt hides the value as you type. Launch Codex from this same terminal so it inherits the variable. Closing the terminal clears this session\'s variable; a separately launched desktop app may not inherit it.')
+step(3,'Add the MCP configuration','Add this block to your Codex configuration file, usually <b>~/.codex/config.toml</b>. Replace an existing bonaca entry instead of adding a duplicate.')
+code('[mcp_servers.bonaca]\nurl = "https://thebonaca.com/api/mcp"\nbearer_token_env_var = "BONACA_MCP_TOKEN"')
+p('The client reads the secret from the environment variable named in the file. Keep the secret itself out of the configuration and out of chat messages. [2]')
+step(4,'Start Codex and verify','Launch Codex from that terminal. Check the configured servers, then start a conversation and try the read-only prompt on page 3:')
+code('codex mcp list\ncodex')
+p('For another compatible client, select <b>Streamable HTTP</b>, use the same MCP URL and send the header <b>Authorization: Bearer &lt;your token&gt;</b>. Enter the token only into that client\'s secure credential field.')
+heading('Rotate or remove machine access')
+p('Change MCP_API_TOKEN in the server environment and redeploy, then update the client\'s value. To disable machine-token access, remove the server variable and redeploy. OAuth connections remain separate.')
+p('[2] <link href="https://learn.chatgpt.com/docs/extend/mcp?surface=cli" color="#385731">Official Codex MCP configuration reference</link>.','SmallB')
+page()
+
+title('05','Connection checklist','Use this page if sign-in works but the assistant still cannot edit.')
+table([['What you see','What to check'],['Connection URL says localhost','Set NEXT_PUBLIC_SITE_URL=https://thebonaca.com in the production hosting environment. Rebuild and redeploy.'],['OAuth setup required / discovery returns 503','Set both MCP_OAUTH_ISSUER and MCP_OAUTH_JWKS_URL in production. Redeploy.'],['401 on an unauthenticated POST','Expected: the endpoint requires authentication. After sign-in, check token expiry, issuer, exact audience and content:read.'],['405 when opening /api/mcp in a browser','Expected for a browser GET. This server accepts MCP POST requests. A browser visit is not a connection test.'],['Can read but cannot publish','OAuth tokens need both content:read and content:write. Update the provider permissions and reconnect.'],['Redirect or invalid_client error','Use the callback URL shown by ChatGPT; verify provider client ID, secret if required, and PKCE S256 support.'],['Content changed since it was read','Ask the assistant to read the latest content and reapply only the intended edits.'],['Edit saved but not visible','Check Coming soon, the exact page/field edited, and that the assistant connects to production. Reload the page.'],['403 Origin not allowed in Inspector','Use Inspector\'s proxy and allow only its exact browser origin via MCP_ALLOWED_ORIGINS.'],['Could not save an undo revision','Check Firestore permissions and connectivity, or local volume write access. Publishing stops if the backup fails.']], [157,350])
+heading('Before you call the setup complete')
+p('[ ] Live connection URL uses thebonaca.com.<br/>[ ] Authentication succeeds with an authorized editor.<br/>[ ] The assistant can read the actual hero text.<br/>[ ] A small requested edit appears in the CRM.<br/>[ ] A revision exists and undo has been verified.')
+p('Developer checks: <font face="Courier" size="9">npm run test:mcp</font>, <font face="Courier" size="9">npm run lint</font>, <font face="Courier" size="9">npx tsc --noEmit</font>, and <font face="Courier" size="9">npm run build</font>. Use MCP Inspector against the deployed endpoint to test real provider authentication. Local automated tests do not configure or verify your production OAuth provider.','SmallB')
+p('Prepared from the Bonaca implementation, your supplied setup notes, the deployment screenshot, and the official references linked on pages 2-4. The PDF documents setup; it does not change your hosting settings or connect your account.','SmallB')
+
+SimpleDocTemplate(OUT,pagesize=A4,rightMargin=44,leftMargin=44,topMargin=42,bottomMargin=57,title='Bonaca MCP - Connection Setup',author='Bonaca',subject='ChatGPT and Codex setup for thebonaca.com').build(story,onFirstPage=footer,onLaterPages=footer)
+print(OUT)

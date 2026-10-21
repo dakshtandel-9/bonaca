@@ -17,17 +17,25 @@ type SaveState = "idle" | "dirty" | "saving" | "saved" | "error";
  * It holds the whole site in state, not just this group, because publishing
  * writes the document in one piece — a partial patch would let two tabs
  * overwrite each other field by field. Only this group's sections are drawn.
+ *
+ * Because the whole document goes back, publishing also sends the version this
+ * tab loaded. If anything else published in the meantime — another tab, an AI
+ * import, the MCP connection — the server refuses rather than letting a stale
+ * tab silently put back everything that changed since it was opened.
  */
 export default function ContentEditor({
   page,
   initialContent,
+  initialVersion,
   updatedAt,
 }: {
   page: PageSchema;
   initialContent: SiteContent;
+  initialVersion: string;
   updatedAt: string | null;
 }) {
   const [content, setContent] = useState<SiteContent>(initialContent);
+  const [version, setVersion] = useState(initialVersion);
   const [state, setState] = useState<SaveState>("idle");
   const [message, setMessage] = useState<string | null>(null);
   const [lastSaved, setLastSaved] = useState<string | null>(updatedAt);
@@ -56,13 +64,14 @@ export default function ContentEditor({
       const response = await fetch("/api/admin/content", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content, expectedVersion: version }),
       });
 
       const data = (await response.json()) as {
         error?: string;
         updatedAt?: string;
         content?: SiteContent;
+        version?: string;
       };
 
       if (!response.ok) {
@@ -72,6 +81,7 @@ export default function ContentEditor({
       }
 
       if (data.content) setContent(data.content);
+      if (data.version) setVersion(data.version);
       setLastSaved(data.updatedAt ?? new Date().toISOString());
       setState("saved");
       setMessage("Published. The site is live with these changes.");
@@ -79,7 +89,7 @@ export default function ContentEditor({
       setState("error");
       setMessage("Could not reach the server.");
     }
-  }, [content]);
+  }, [content, version]);
 
   /* ⌘S / Ctrl-S, because that is what anyone editing text reaches for. */
   useEffect(() => {

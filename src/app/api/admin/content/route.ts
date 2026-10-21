@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 
 import { getSiteContentUncached, revalidateSiteContent } from "@/lib/cms/content";
+import { contentVersion } from "@/lib/cms/mcp-content";
 import { withDefaults } from "@/lib/cms/merge";
 import { storageBackend, writeStoredContent } from "@/lib/cms/store";
 import { getSession } from "@/lib/server/auth";
@@ -42,13 +43,20 @@ export async function PUT(request: NextRequest) {
     return Response.json({ error: "Malformed request." }, { status: 400 });
   }
 
-  const incoming = (payload as { content?: unknown } | null)?.content;
+  const { content: incoming, expectedVersion } = (payload ?? {}) as {
+    content?: unknown;
+    expectedVersion?: unknown;
+  };
   if (!incoming || typeof incoming !== "object") {
     return Response.json({ error: "No content supplied." }, { status: 400 });
   }
 
   try {
-    const record = await writeStoredContent(withDefaults(incoming), session?.username ?? "admin");
+    const record = await writeStoredContent(
+      withDefaults(incoming),
+      session?.username ?? "admin",
+      typeof expectedVersion === "string" ? expectedVersion : undefined,
+    );
     revalidateSiteContent();
 
     return Response.json({
@@ -56,8 +64,18 @@ export async function PUT(request: NextRequest) {
       updatedAt: record.updatedAt,
       storage: storageBackend,
       content: record.content,
+      version: contentVersion(record.content),
     });
   } catch (error) {
+    if (error instanceof Error && error.message.startsWith("Content changed since it was read")) {
+      return Response.json(
+        {
+          error:
+            "The site was changed somewhere else after you opened this page, so nothing was published. Copy anything you typed, reload the page, and make your edit again.",
+        },
+        { status: 409 },
+      );
+    }
     console.error("[cms] publish failed:", error);
     return Response.json(
       {

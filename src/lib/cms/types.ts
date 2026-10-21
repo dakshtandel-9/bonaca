@@ -76,19 +76,67 @@ export interface GalleryItemContent {
   height: number;
 }
 
-export interface ShowcaseFrame {
-  id: string;
-  label: string;
-  image: string;
-  alt: string;
-}
-
 export interface MomentItem {
   id: string;
   time: string;
   title: string;
   body: string;
   image: string;
+}
+
+/** One icon-and-word marker under the region copy, e.g. "Tea gardens". */
+export interface HighlightItem {
+  id: string;
+  label: string;
+  iconKey: string;
+}
+
+/** A photograph in a stay option's gallery. */
+export interface StayPhoto {
+  id: string;
+  src: string;
+  alt: string;
+}
+
+/** An icon-and-label fact under a stay option's photographs, e.g. "Up to 4 adults". */
+export interface StayFact {
+  id: string;
+  iconKey: string;
+  label: string;
+}
+
+/** One way to book the place — a single duplex, or both. */
+export interface StayOption {
+  id: string;
+  tag: string;
+  name: string;
+  availability: string;
+  photos: StayPhoto[];
+  facts: StayFact[];
+  planTitle: string;
+  inclusions: string[];
+  note: string;
+  highlightLabel: string;
+  highlightValue: string;
+}
+
+export interface MealItem {
+  id: string;
+  name: string;
+  time: string;
+  tag: string;
+  description: string;
+  image: string;
+  imageAlt: string;
+}
+
+/** A park or sanctuary and how far it is by road. */
+export interface WildlifeItem {
+  id: string;
+  name: string;
+  highlight: string;
+  distanceKm: number;
+  driveTime: string;
 }
 
 export interface AmenityItem {
@@ -176,7 +224,13 @@ export interface SiteContent {
     contact: { email: string; phone: string; whatsapp: string };
     social: { instagram: string; facebook: string };
     links: { airbnb: string; booking: string; agoda: string; googleMaps: string };
-    place: { locality: string; region: string; countryCode: string };
+    place: {
+      /** Full postal address, shown on the holding page. */
+      address: string;
+      locality: string;
+      region: string;
+      countryCode: string;
+    };
     branding: { logoLight: string; logoDark: string; ogImage: string };
     /**
      * "auto" keeps the launch-readiness guard: the site stays out of search
@@ -245,10 +299,29 @@ export interface SiteContent {
     };
     rooms: SectionHeading & { items: RoomItem[] };
     gallery: SectionHeading & { items: GalleryItemContent[] };
-    showcase: SectionHeading & { frames: ShowcaseFrame[] };
-    moments: SectionHeading & { items: MomentItem[] };
+    moments: SectionHeading & {
+      items: MomentItem[];
+      navLabel: string;
+      ctaLabel: string;
+      ctaHref: string;
+    };
+    region: {
+      index: string;
+      eyebrow: string;
+      title: string;
+      paragraphs: string[];
+      ctaLabel: string;
+      ctaHref: string;
+      image: string;
+      imageAlt: string;
+      highlights: HighlightItem[];
+    };
     amenities: SectionHeading;
-    reviews: SectionHeading & { items: ReviewItem[] };
+    reviews: SectionHeading & {
+      /** Off hides the band without deleting the quotes, e.g. before there are real ones. */
+      visible: boolean;
+      items: ReviewItem[];
+    };
   };
 
   accommodation: {
@@ -276,7 +349,28 @@ export interface SiteContent {
     };
     about: SectionHeading & { paragraphs: string[] };
     rooms: SectionHeading & { items: BedroomItem[] };
-    amenities: SectionHeading;
+    stays: SectionHeading & {
+      items: StayOption[];
+      detailsLabel: string;
+      selectLabel: string;
+      selectedLabel: string;
+      summaryTitle: string;
+      emptyLabel: string;
+      /** Extra rows under check-in and check-out, which come from the fine print. */
+      summaryRows: SpecItem[];
+      summaryNote: string;
+      primaryCtaLabel: string;
+      callCtaLabel: string;
+    };
+    /** The amenities band itself is the home page's; only its chapter number differs here. */
+    amenitiesIndex: string;
+    meals: SectionHeading & { items: MealItem[]; note: string };
+    wildlife: SectionHeading & {
+      image: string;
+      imageAlt: string;
+      items: WildlifeItem[];
+      note: string;
+    };
     gallery: SectionHeading & { images: ImageField[] };
     policies: SectionHeading & {
       timesTitle: string;

@@ -26,6 +26,20 @@ export function secondaryPlatforms(content: SiteContent): BookingPlatformItem[] 
   return content.booking.platforms.filter((platform) => platform.id !== primary?.id);
 }
 
+/**
+ * The number inside a wa.me / api.whatsapp.com link, written out for people:
+ * "https://wa.me/919000000000" → "+91 90000 00000". Null when there is none.
+ */
+export function whatsappNumber(link: string): string | null {
+  if (isPlaceholderLink(link)) return null;
+  const digits = (link.match(/(?:wa\.me\/|phone=)\+?(\d{8,15})/) ?? [])[1];
+  if (!digits || /0{5,}/.test(digits.slice(-10))) return null;
+  if (digits.length === 12 && digits.startsWith("91")) {
+    return `+91 ${digits.slice(2, 7)} ${digits.slice(7)}`;
+  }
+  return `+${digits}`;
+}
+
 /** `tel:` href with the spaces the display number keeps stripped out. */
 export const telHref = (phone: string) => `tel:${phone.replace(/\s/g, "")}`;
 
@@ -88,7 +102,9 @@ export function launchIssues(content: SiteContent): string[] {
     ...Object.entries(requiredLinks)
       .filter(([, href]) => isPlaceholderLink(href))
       .map(([label]) => `${label} link`),
-    ...(content.home.reviews.items.some((review) => review.id.startsWith("placeholder-"))
+    /* A hidden band makes no claims, so its seeded quotes do not block indexing. */
+    ...(content.home.reviews.visible &&
+    content.home.reviews.items.some((review) => review.id.startsWith("placeholder-"))
       ? ["real guest reviews"]
       : []),
   ];

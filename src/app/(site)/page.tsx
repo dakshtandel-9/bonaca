@@ -3,9 +3,9 @@ import GallerySection from "@/components/sections/GallerySection";
 import HeroSection from "@/components/sections/HeroSection";
 import MomentsSection from "@/components/sections/MomentsSection";
 import OverviewSection from "@/components/sections/OverviewSection";
+import RegionSection from "@/components/sections/RegionSection";
 import ReviewsSection from "@/components/sections/ReviewsSection";
 import RoomsSection from "@/components/sections/RoomsSection";
-import ShowcaseSection from "@/components/sections/ShowcaseSection";
 import StorySection from "@/components/sections/StorySection";
 import { getSiteContent } from "@/lib/cms/content";
 import { isComingSoon } from "@/lib/cms/derive";
@@ -32,9 +32,9 @@ export default async function HomePage() {
       <StorySection content={content} />       {/* dark   */}
       <RoomsSection content={content} />       {/* warm   */}
       <GallerySection content={content} />     {/* dark   */}
-      <ShowcaseSection content={content} />    {/* cream  */}
-      <MomentsSection content={content} />     {/* sand   */}
+      <MomentsSection content={content} />     {/* cream  */}
       <AmenitiesSection content={content} />   {/* dark   */}
+      <RegionSection content={content} />      {/* cream  */}
       <ReviewsSection content={content} />     {/* cream  */}
     </main>
   );

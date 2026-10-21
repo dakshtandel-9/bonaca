@@ -14,13 +14,13 @@ const COLUMN_SPEEDS = [72, 58, 66];
  * against the other two. Pure CSS animation, so this stays a server component
  * and the wall still reads as three plain lists with no JavaScript at all.
  *
- * Renders nothing when `reviews` is empty, so the section disappears cleanly
- * rather than showing an empty frame.
+ * Renders nothing when switched off in the CRM or when `reviews` is empty, so
+ * the section disappears cleanly rather than showing an empty frame.
  */
 export default function ReviewsSection({ content }: { content: SiteContent }) {
   const section = content.home.reviews;
   const reviews = section.items;
-  if (reviews.length === 0) return null;
+  if (!section.visible || reviews.length === 0) return null;
 
   /* Dealt round-robin rather than sliced, so short lists thin every column
      evenly instead of leaving the last one empty. */

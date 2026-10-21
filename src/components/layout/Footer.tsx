@@ -3,6 +3,7 @@ import Image from "next/image";
 import Container from "@/components/layout/Container";
 import ExternalLink from "@/components/ui/ExternalLink";
 import Monogram from "@/components/ui/Monogram";
+import SocialIcon from "@/components/ui/SocialIcon";
 import { isPlaceholderLink, telHref } from "@/lib/cms/derive";
 import type { SiteContent } from "@/lib/cms/types";
 
@@ -48,10 +49,12 @@ export default function Footer({ content }: { content: SiteContent }) {
                 <li>{site.place.locality}</li>
               </ul>
 
-              <ul className="footer-socials">
+              <ul className="footer-socials" aria-label="Social media">
                 {navigation.social.map((link) => (
                   <li key={link.id}>
-                    <ExternalLink href={link.url}>{link.label}</ExternalLink>
+                    <ExternalLink href={link.url} className="footer-social-link" aria-label={link.label}>
+                      <SocialIcon link={link} />
+                    </ExternalLink>
                   </li>
                 ))}
               </ul>
