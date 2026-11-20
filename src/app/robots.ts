@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { getSiteContent } from "@/lib/cms/content";
-import { isIndexable } from "@/lib/cms/derive";
+import { isComingSoon, isIndexable } from "@/lib/cms/derive";
 import { siteUrl } from "@/lib/seo";
 
 export default async function robots(): Promise<MetadataRoute.Robots> {
@@ -9,7 +9,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
 
   /* While the holding page is up there is nothing on the domain worth
      crawling, and a placeholder that gets indexed outlives the launch. */
-  if (content.comingSoon.enabled) {
+  if (isComingSoon(content)) {
     return { rules: [{ userAgent: "*", disallow: "/" }], host: siteUrl };
   }
 

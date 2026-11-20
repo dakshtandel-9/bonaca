@@ -119,13 +119,23 @@ export function launchIssues(content: SiteContent): string[] {
  * this check ships its whole copy to the browser inside the very page meant
  * to be hiding it. `(site)/layout.tsx` then draws the holding page itself.
  */
-export const isComingSoon = (content: SiteContent): boolean => content.comingSoon.enabled;
+export const isComingSoon = (content: SiteContent): boolean =>
+  FORCE_COMING_SOON || content.comingSoon.enabled;
+
+/**
+ * Pins the holding page on from code, whatever the CRM switch says.
+ *
+ * The CRM flag lives in Firestore, so a deploy alone cannot change it. While
+ * this is `true` every deploy shows the coming soon page; set it back to
+ * `false` and push to hand control back to the dashboard toggle.
+ */
+export const FORCE_COMING_SOON = true;
 
 export function isIndexable(content: SiteContent): boolean {
   /* A holding page is never worth indexing, and it outranks the manual
      override — turning the site off is a clearer instruction than a setting
      someone flipped to "index" weeks ago. */
-  if (content.comingSoon.enabled) return false;
+  if (isComingSoon(content)) return false;
 
   if (content.site.indexing === "index") return true;
   if (content.site.indexing === "noindex") return false;

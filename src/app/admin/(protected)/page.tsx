@@ -3,7 +3,7 @@ import Link from "next/link";
 import ComingSoonToggle from "@/components/admin/ComingSoonToggle";
 
 import { getSiteContentUncached } from "@/lib/cms/content";
-import { isIndexable, launchIssues } from "@/lib/cms/derive";
+import { FORCE_COMING_SOON, isComingSoon, isIndexable, launchIssues } from "@/lib/cms/derive";
 import { CMS_SCHEMA } from "@/lib/cms/schema";
 import { readStoredContent, storageBackend } from "@/lib/cms/store";
 import { mediaBackend } from "@/lib/server/media";
@@ -48,7 +48,15 @@ export default async function AdminDashboard() {
         </a>
       </div>
 
-      <ComingSoonToggle enabled={content.comingSoon.enabled} />
+      {FORCE_COMING_SOON ? (
+        <div className="admin-notice" data-tone="warn">
+          <strong>The coming soon page is pinned on in code.</strong> Set{" "}
+          <code>FORCE_COMING_SOON</code> to <code>false</code> in{" "}
+          <code>src/lib/cms/derive.ts</code> and redeploy to launch the site or use this toggle.
+        </div>
+      ) : (
+        <ComingSoonToggle enabled={content.comingSoon.enabled} />
+      )}
 
       {storageBackend === "file" ? (
         <div className="admin-notice" data-tone="warn">
@@ -159,7 +167,7 @@ export default async function AdminDashboard() {
             </div>
             <div>
               <dt>Public site</dt>
-              <dd>{content.comingSoon.enabled ? "Coming soon page" : "Live"}</dd>
+              <dd>{isComingSoon(content) ? "Coming soon page" : "Live"}</dd>
             </div>
             <div>
               <dt>Content store</dt>
